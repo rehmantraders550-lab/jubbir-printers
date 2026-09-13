@@ -1,0 +1,8 @@
+{
+  "name": "jubbirprinters",
+  "description": "an interactive webapp for a printing shop",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
