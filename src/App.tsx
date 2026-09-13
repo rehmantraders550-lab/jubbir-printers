@@ -17,7 +17,6 @@ import {
   X,
   Maximize2
 } from 'lucide-react';
-import dtfImage from './assets/images/regenerated_image_1789311660499.jpg';
 
 // Brand Colors
 const COLORS = {
@@ -30,6 +29,9 @@ const COLORS = {
 };
 
 // Pricing Constants
+const dtfImage = '/material-specimens.jpg';
+const offsetImage = '/hdc-flatbed.png';
+
 const MIN_ORDER = 500;
 
 export default function App() {
@@ -127,7 +129,7 @@ export default function App() {
       text += `*Estimated Total:* Rs. ${offsetTotal.toLocaleString()}\n`;
     }
     
-    const url = `https://wa.me/923000000000?text=${encodeURIComponent(text)}`;
+    const url = `https://wa.me/923088999988?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
 
@@ -335,9 +337,9 @@ export default function App() {
                   exit={{ opacity: 0, scale: 1.05 }}
                   transition={{ duration: 0.4 }}
                   className="absolute inset-0 rounded-[2rem] overflow-hidden border border-white/10 group cursor-pointer shadow-2xl"
-                  onClick={() => setLightboxImage('hadi colors.png')}
+                  onClick={() => setLightboxImage(offsetImage)}
                 >
-                  <img src="hadi colors.png" alt="Offset Quality" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src={offsetImage} alt="Offset Quality" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1A1817] via-transparent to-transparent opacity-80"></div>
                   
                   {/* Glowing Status */}
