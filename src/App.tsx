@@ -1,700 +1,512 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  MapPin, 
-  Phone, 
-  Printer, 
-  UploadCloud, 
-  MessageCircle, 
-  FileCheck2, 
-  ShieldCheck, 
-  Zap, 
-  ChevronRight,
-  Layers,
-  Settings,
-  Image as ImageIcon,
+import {
   ArrowRight,
+  Check,
+  ChevronRight,
+  FileCheck2,
+  Layers,
+  MessageCircle,
+  PackageOpen,
+  Printer,
+  Scissors,
+  UploadCloud,
   X,
-  Maximize2
+  Zap,
 } from 'lucide-react';
 import dtfImage from './assets/images/regenerated_image_1789311660499.jpg';
 
-// Brand Colors
 const COLORS = {
-  bg: '#1A1817',
-  card: '#22201F',
-  primary: '#E7717D',
-  success: '#AFD275',
-  textLight: '#C2CAD0',
-  textSand: '#C2B9B0',
+  bg: '#171717',
+  surface: '#202020',
+  surfaceSoft: '#262626',
+  line: '#353535',
+  accent: '#F36B2B',
+  paper: '#F3EFE7',
+  muted: '#AFAAA1',
+  white: '#FFFFFF',
 };
 
-// Pricing Constants
-const MIN_ORDER = 500;
+type ServiceKey = 'commercial' | 'packaging' | 'dtf' | 'custom';
+
+const services: Record<ServiceKey, {
+  label: string;
+  kicker: string;
+  title: string;
+  description: string;
+  applications: string[];
+  process: string;
+}> = {
+  commercial: {
+    label: 'Commercial Print',
+    kicker: '01 / Everyday production',
+    title: 'Commercial print that stays consistent.',
+    description:
+      'Business stationery, flyers, brochures, catalogues, menus, tags and repeat print runs managed with a production-first approach.',
+    applications: ['Business cards', 'Flyers', 'Brochures', 'Menus', 'Tags', 'Stationery'],
+    process: 'Offset / short-run production',
+  },
+  packaging: {
+    label: 'Packaging',
+    kicker: '02 / Product presentation',
+    title: 'Packaging prepared for real products.',
+    description:
+      'Printed cartons, sleeves, labels and retail packaging developed around artwork, stock, finishing and the physical requirements of the job.',
+    applications: ['Product cartons', 'Sleeves', 'Labels', 'Hang tags', 'Bakery packs', 'Retail packs'],
+    process: 'Print / finish / convert',
+  },
+  dtf: {
+    label: 'DTF Transfers',
+    kicker: '03 / Transfer production',
+    title: 'Sharp, repeatable transfer production.',
+    description:
+      'Full-colour DTF transfers for apparel, uniforms, merchandise and branded textile applications, including short runs and gang-sheet production.',
+    applications: ['Logos', 'Chest prints', 'Back prints', 'Uniform graphics', 'Merchandise', 'Gang sheets'],
+    process: 'DTF transfer production',
+  },
+  custom: {
+    label: 'Custom Production',
+    kicker: '04 / Non-standard jobs',
+    title: 'For work that does not fit a preset.',
+    description:
+      'Unusual dimensions, mixed requirements, prototypes, custom finishing and production jobs that need a more direct conversation before quoting.',
+    applications: ['Odd sizes', 'Prototype runs', 'Mixed materials', 'Special finishing', 'Bulk jobs', 'Custom formats'],
+    process: 'Specification-led production',
+  },
+};
+
+const capabilityRows = [
+  {
+    icon: Printer,
+    title: 'Printing',
+    copy: 'Offset, short-run commercial production and DTF transfer printing selected according to the job.',
+    meta: 'PROCESS / OUTPUT',
+  },
+  {
+    icon: Layers,
+    title: 'Stocks & substrates',
+    copy: 'Coated and uncoated papers, card stocks, packaging board, kraft, sticker materials and transfer films.',
+    meta: 'MATERIAL / SURFACE',
+  },
+  {
+    icon: Scissors,
+    title: 'Finishing',
+    copy: 'Lamination, foil, creasing, cutting, folding, binding and die-cutting where the production route requires it.',
+    meta: 'FINISH / CONVERSION',
+  },
+  {
+    icon: FileCheck2,
+    title: 'Artwork',
+    copy: 'Print-ready file review with attention to dimensions, bleed, colour mode, resolution and fonts.',
+    meta: 'PREFLIGHT / CHECK',
+  },
+];
+
+const jobs = [
+  { title: 'Retail Carton', meta: 'Offset / Printed board / Matte lamination', img: 'banner.png' },
+  { title: 'DTF Transfer', meta: 'Full colour / Gang sheet / Apparel', img: dtfImage },
+  { title: 'Commercial Brochure', meta: 'Offset / Coated paper / Folded', img: 'hadi colors.png' },
+  { title: 'Product Labels', meta: 'Adhesive stock / Full colour / Custom cut', img: 'banner.png' },
+];
+
+const timeline = [
+  ['01', 'Specify', 'Share size, quantity, material and finishing requirements.'],
+  ['02', 'Upload', 'Send artwork or reference files for review.'],
+  ['03', 'Review', 'We inspect the job and flag production issues where needed.'],
+  ['04', 'Quote', 'A quotation is prepared around the confirmed specification.'],
+  ['05', 'Approve', 'Artwork, specification and quotation are locked before production.'],
+  ['06', 'Produce', 'Printing, finishing and final preparation begin.'],
+  ['07', 'Collect / Dispatch', 'Completed work is prepared for collection or arranged dispatch.'],
+];
 
 export default function App() {
-  // Global State
-  const [activeTab, setActiveTab] = useState<'dtf' | 'offset'>('dtf');
-  
-  // DTF State
-  const [dtfWidth, setDtfWidth] = useState<number>(24);
-  const [dtfLength, setDtfLength] = useState<number>(36);
-  const [dtfQty, setDtfQty] = useState<number>(25);
-  const [dtfFile, setDtfFile] = useState<File | null>(null);
-  const [dtfDragActive, setDtfDragActive] = useState(false);
+  const [activeService, setActiveService] = useState<ServiceKey>('commercial');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Offset State
-  const [offsetCategory, setOffsetCategory] = useState<string>('Flyers');
-  const [offsetPaper, setOffsetPaper] = useState<string>('130g Gloss');
-  const [offsetQty, setOffsetQty] = useState<number>(1000);
-
-  // Totals State
-  const [dtfTotal, setDtfTotal] = useState<number>(0);
-  const [offsetTotal, setOffsetTotal] = useState<number>(0);
-  const [dtfDiscountStr, setDtfDiscountStr] = useState<string>('');
-
-  // Showcase State
-  const [showcaseTab, setShowcaseTab] = useState<'dtf' | 'offset'>('dtf');
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-
-  // --- Calculations ---
-
-  const calculateDTF = useCallback(() => {
-    // Formula: (Width * Length * 0.50) * Quantity
-    const area = dtfWidth * dtfLength;
-    const baseTotal = area * 0.50 * dtfQty;
-
-    // Discounts
-    let discount = 0;
-    let discountMsg = '';
-    if (dtfQty >= 100) { discount = 0.20; discountMsg = '20% Bulk Discount Applied!'; }
-    else if (dtfQty >= 50) { discount = 0.15; discountMsg = '15% Bulk Discount Applied!'; }
-    else if (dtfQty >= 25) { discount = 0.10; discountMsg = '10% Bulk Discount Applied!'; }
-
-    setDtfDiscountStr(discountMsg);
-    const finalTotal = Math.max(MIN_ORDER, baseTotal * (1 - discount));
-    setDtfTotal(Math.round(finalTotal));
-  }, [dtfWidth, dtfLength, dtfQty]);
-
-  const calculateOffset = useCallback(() => {
-    // Formula: Setup Fee (Rs. 1,500) + (Quantity * Rs. 12 base sheet cost)
-    let multiplier = 1;
-    if (offsetCategory === 'Business Cards') multiplier = 0.5;
-    if (offsetCategory === 'Brochures') multiplier = 2;
-
-    const setupFee = 1500;
-    const baseTotal = setupFee + (offsetQty * 12 * multiplier);
-    const finalTotal = Math.max(MIN_ORDER, baseTotal);
-    setOffsetTotal(Math.round(finalTotal));
-  }, [offsetQty, offsetCategory, offsetPaper]);
-
-  useEffect(() => { calculateDTF(); }, [calculateDTF]);
-  useEffect(() => { calculateOffset(); }, [calculateOffset]);
-
-  // --- Handlers ---
-
-  const handleApplyPreset = (w: number, l: number) => {
-    setDtfWidth(w);
-    setDtfLength(l);
-  };
-
-  const handleFileDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDtfDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setDtfFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const scrollToCalculator = (tab: 'dtf' | 'offset') => {
-    setActiveTab(tab);
-    document.getElementById('calculator-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  const sendWhatsApp = () => {
-    let text = `*NEW QUOTE REQUEST - JUBBIR PRINTERS* 🖨️\n\n`;
-    
-    if (activeTab === 'dtf') {
-      text += `*Type:* DTF Transfers\n`;
-      text += `*Size:* ${dtfWidth}" x ${dtfLength}"\n`;
-      text += `*Quantity:* ${dtfQty}\n`;
-      if (dtfFile) text += `*Artwork:* ${dtfFile.name}\n`;
-      text += `*Estimated Total:* Rs. ${dtfTotal.toLocaleString()}\n`;
-    } else {
-      text += `*Type:* Offset Printing\n`;
-      text += `*Product:* ${offsetCategory} (${offsetPaper})\n`;
-      text += `*Quantity:* ${offsetQty}\n`;
-      text += `*Estimated Total:* Rs. ${offsetTotal.toLocaleString()}\n`;
-    }
-    
-    const url = `https://wa.me/923000000000?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-  };
+  const active = useMemo(() => services[activeService], [activeService]);
 
   return (
-    <div className="min-h-screen font-sans selection:bg-[#E7717D]/30" style={{ backgroundColor: COLORS.bg, color: COLORS.textLight }}>
-      
-      {/* 1. GLOBAL HEADER ENHANCEMENTS */}
-      <header className="border-b border-white/5 bg-[#1A1817]/90 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div
+      className="min-h-screen font-sans selection:bg-[#F36B2B]/30"
+      style={{ backgroundColor: COLORS.bg, color: COLORS.white }}
+    >
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#171717]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-4 sm:px-8">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl" style={{ backgroundColor: `${COLORS.primary}20`, color: COLORS.primary }}>
-              <Printer className="w-6 h-6" />
+            <div className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5">
+              <Printer className="h-5 w-5" style={{ color: COLORS.accent }} />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">JUBBIR PRINTERS</h1>
-              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wider" style={{ color: COLORS.textSand }}>
-                Estd. Gujrat, Pakistan
+              <p className="text-sm font-black tracking-[0.16em] text-white">JUBBIR PRINTERS</p>
+              <p className="text-[10px] uppercase tracking-[0.24em]" style={{ color: COLORS.muted }}>
+                Production Desk
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-6 text-sm font-medium">
-            {/* Location Badge */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#C2CAD0]">
-              <MapPin className="w-4 h-4" style={{ color: COLORS.primary }} />
-              <span>East Circular Road, Gujrat, Pakistan</span>
-            </div>
-            
-            {/* Contact CTA */}
-            <button 
-              onClick={() => document.getElementById('calculator-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full text-white transition-all hover:scale-105 active:scale-95 shadow-lg"
-              style={{ backgroundColor: COLORS.primary }}
-            >
-              <span>Get a Quote</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+          <div className="hidden items-center gap-7 text-xs font-semibold uppercase tracking-[0.12em] text-white/70 md:flex">
+            <a href="#services" className="transition hover:text-white">Services</a>
+            <a href="#capabilities" className="transition hover:text-white">Capabilities</a>
+            <a href="#work" className="transition hover:text-white">Work</a>
+            <a href="#process" className="transition hover:text-white">Process</a>
           </div>
+
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold text-black transition hover:scale-[1.02]"
+            style={{ backgroundColor: COLORS.paper }}
+          >
+            Start a Job <ArrowRight className="h-4 w-4" />
+          </button>
         </div>
       </header>
 
-      <main className="flex flex-col w-full">
-        
-        {/* 2. HERO SECTION WITH BACKGROUND */}
-        <div className="relative w-full border-b border-white/5">
-          <div className="absolute inset-0 z-0">
-            <img src="banner.png" alt="Industrial Print Line" className="w-full h-full object-cover object-top" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1817]/80 via-[#1A1817]/90 to-[#1A1817]"></div>
+      <main>
+        <section className="relative overflow-hidden border-b border-white/10">
+          <div className="absolute inset-0">
+            <img src="banner.png" alt="Print production" className="h-full w-full object-cover opacity-35" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#171717_0%,rgba(23,23,23,.94)_42%,rgba(23,23,23,.58)_100%)]" />
           </div>
 
-          <section className="pt-16 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center max-w-4xl mx-auto mb-14"
-            >
-              <h2 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-                PIONEERS OF INDUSTRIAL <br className="hidden md:block" />
-                <span style={{ color: COLORS.primary }}>HIGH-VOLUME PRINTING</span>
-              </h2>
-              <p className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: COLORS.textSand }}>
-                Serving Gujrat with state-of-the-art Offset & DTF solutions since 1985. We deliver uncompromising quality with massive volume savings.
+          <div className="relative mx-auto grid min-h-[720px] max-w-7xl items-end gap-12 px-5 pb-16 pt-28 sm:px-8 lg:grid-cols-[1.2fr_.8fr] lg:pb-24">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6 }}>
+              <p className="mb-5 text-xs font-bold uppercase tracking-[0.28em]" style={{ color: COLORS.accent }}>
+                Commercial Print / Packaging / DTF / Custom Production
               </p>
+              <h1 className="max-w-4xl text-5xl font-black leading-[.96] tracking-[-0.05em] text-white sm:text-7xl lg:text-[92px]">
+                Printing made straightforward.
+              </h1>
+              <p className="mt-7 max-w-2xl text-lg leading-8" style={{ color: COLORS.muted }}>
+                Send your specification, quantity and artwork. We review the job, define the production route and move it forward from one desk.
+              </p>
+
+              <div className="mt-9 flex flex-wrap gap-3">
+                <button
+                  onClick={() => setDrawerOpen(true)}
+                  className="flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-extrabold text-white"
+                  style={{ backgroundColor: COLORS.accent }}
+                >
+                  Start a Job <ArrowRight className="h-4 w-4" />
+                </button>
+                <a
+                  href="#process"
+                  className="flex items-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-sm font-bold text-white"
+                >
+                  How it works <ChevronRight className="h-4 w-4" />
+                </a>
+              </div>
             </motion.div>
 
-            {/* Dual Persona Pathway Cards */}
-            <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
-              {/* Card 1: DTF */}
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative p-8 sm:p-10 rounded-[2rem] border transition-all duration-300 group flex flex-col items-start bg-[#22201F]/80 backdrop-blur-md"
-                style={{ borderColor: 'rgba(255,255,255,0.08)' }}
-                onMouseEnter={(e) => e.currentTarget.style.borderColor = `${COLORS.primary}80`}
-                onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#E7717D] opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
-                <div className="p-4 rounded-2xl mb-6" style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}>
-                  <Zap className="w-8 h-8" />
+            <div className="rounded-[28px] border border-white/10 bg-black/30 p-6 backdrop-blur-md">
+              <div className="mb-7 flex items-center justify-between border-b border-white/10 pb-5">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em]" style={{ color: COLORS.muted }}>
+                    Production Desk
+                  </p>
+                  <p className="mt-2 text-xl font-bold">Everything starts with the job.</p>
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">DTF Transfers</h3>
-                <p className="text-[#C2CAD0] mb-8 leading-relaxed text-lg">
-                  Focused on micro-orders, rapid 24-hour turnarounds, custom gang sheets, and vibrant apparel printing.
-                </p>
-                <button 
-                  onClick={() => scrollToCalculator('dtf')}
-                  className="mt-auto flex items-center gap-2 font-bold group-hover:gap-4 transition-all duration-300 text-lg"
-                  style={{ color: COLORS.primary }}
-                >
-                  Calculate DTF Price <ChevronRight className="w-6 h-6" />
-                </button>
-              </motion.div>
-
-              {/* Card 2: Offset */}
-              <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="relative p-8 sm:p-10 rounded-[2rem] border transition-all duration-300 group flex flex-col items-start bg-[#22201F]/80 backdrop-blur-md"
-                style={{ borderColor: 'rgba(255,255,255,0.08)' }}
-                onMouseEnter={(e) => e.currentTarget.style.borderColor = `${COLORS.success}80`}
-                onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#AFD275] opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
-                <div className="p-4 rounded-2xl mb-6" style={{ backgroundColor: `${COLORS.success}15`, color: COLORS.success }}>
-                  <Layers className="w-8 h-8" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Offset Printing</h3>
-                <p className="text-[#C2CAD0] mb-8 leading-relaxed text-lg">
-                  Engineered for high-volume commercial printing. Unbeatable bulk savings on packaging, flyers, and paper stocks.
-                </p>
-                <button 
-                  onClick={() => scrollToCalculator('offset')}
-                  className="mt-auto flex items-center gap-2 font-bold group-hover:gap-4 transition-all duration-300 text-lg"
-                  style={{ color: COLORS.success }}
-                >
-                  View Offset Pricing <ChevronRight className="w-6 h-6" />
-                </button>
-              </motion.div>
+                <Zap className="h-5 w-5" style={{ color: COLORS.accent }} />
+              </div>
+              <div className="space-y-4">
+                {['Specification', 'Artwork', 'Production route', 'Quotation', 'Approval'].map((item, index) => (
+                  <div key={item} className="flex items-center justify-between border-b border-white/10 pb-4 last:border-0 last:pb-0">
+                    <span className="text-sm text-white/80">{item}</span>
+                    <span className="text-[10px] font-bold tracking-[0.18em]" style={{ color: COLORS.muted }}>
+                      0{index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </section>
-        </div>
+          </div>
 
-        {/* 3. INTERACTIVE CAPABILITIES SHOWCASE */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl sm:text-4xl font-bold text-white mb-4">Industrial Capabilities & Quality Showcase</h3>
-            <p className="text-[#C2CAD0] max-w-2xl mx-auto text-lg">
-              Explore our state-of-the-art production quality up close.
+          <div className="relative border-t border-white/10 bg-black/30">
+            <div className="mx-auto flex max-w-7xl gap-8 overflow-hidden px-5 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-white/65 sm:px-8">
+              <span>Business Cards</span><span>Packaging</span><span>Labels</span><span>Brochures</span>
+              <span>DTF Transfers</span><span>Stationery</span><span>Bulk Printing</span><span>Custom Jobs</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="services" className="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:py-32">
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.25em]" style={{ color: COLORS.accent }}>Choose your production route</p>
+              <h2 className="mt-4 max-w-3xl text-4xl font-black tracking-[-0.04em] sm:text-6xl">One desk. Different production paths.</h2>
+            </div>
+            <p className="max-w-md text-sm leading-7" style={{ color: COLORS.muted }}>
+              The route changes with the job. The interface stays simple.
             </p>
           </div>
 
-          {/* Toggle Switch */}
-          <div className="flex justify-center mb-12">
-            <div className="flex p-1.5 rounded-full bg-black/40 border border-white/10 backdrop-blur-md">
-              <button
-                onClick={() => setShowcaseTab('dtf')}
-                className={`py-2.5 px-6 rounded-full text-sm font-bold transition-all duration-300 ${showcaseTab === 'dtf' ? 'bg-[#E7717D] text-white shadow-lg shadow-[#E7717D]/20' : 'text-[#C2CAD0] hover:text-white'}`}
-              >
-                DTF Production Quality
-              </button>
-              <button
-                onClick={() => setShowcaseTab('offset')}
-                className={`py-2.5 px-6 rounded-full text-sm font-bold transition-all duration-300 ${showcaseTab === 'offset' ? 'bg-[#AFD275] text-[#1A1817] shadow-lg shadow-[#AFD275]/20' : 'text-[#C2CAD0] hover:text-white'}`}
-              >
-                Offset Bulk Production
-              </button>
+          <div className="grid gap-8 lg:grid-cols-[.78fr_1.22fr]">
+            <div className="space-y-2">
+              {(Object.keys(services) as ServiceKey[]).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveService(key)}
+                  className="flex w-full items-center justify-between border-b border-white/10 px-1 py-5 text-left"
+                >
+                  <span className={`text-lg font-bold transition ${activeService === key ? 'text-white' : 'text-white/45'}`}>
+                    {services[key].label}
+                  </span>
+                  <span className="h-2.5 w-2.5 rounded-full border border-white/20" style={{ backgroundColor: activeService === key ? COLORS.accent : 'transparent' }} />
+                </button>
+              ))}
             </div>
-          </div>
 
-          {/* Image Cards */}
-          <div className="max-w-4xl mx-auto relative h-[400px] sm:h-[500px]">
             <AnimatePresence mode="wait">
-              {showcaseTab === 'dtf' ? (
-                <motion.div
-                  key="dtf-showcase"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.05 }}
-                  transition={{ duration: 0.4 }}
-                  className="absolute inset-0 rounded-[2rem] overflow-hidden border border-white/10 group cursor-pointer shadow-2xl"
-                  onClick={() => setLightboxImage(dtfImage)}
-                >
-                  <img src={dtfImage} alt="DTF Quality" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1817] via-transparent to-transparent opacity-80"></div>
-                  
-                  {/* Glowing Status */}
-                  <div className="absolute top-6 left-6 flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#E7717D] animate-pulse shadow-[0_0_8px_#E7717D]"></div>
-                    <span className="text-white text-xs font-bold tracking-wide uppercase">Live Preview</span>
-                  </div>
+              <motion.div
+                key={activeService}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="rounded-[30px] border border-white/10 p-7 sm:p-10"
+                style={{ backgroundColor: COLORS.surface }}
+              >
+                <p className="text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: COLORS.accent }}>{active.kicker}</p>
+                <h3 className="mt-5 max-w-2xl text-3xl font-black tracking-[-0.03em] sm:text-5xl">{active.title}</h3>
+                <p className="mt-6 max-w-2xl text-base leading-8" style={{ color: COLORS.muted }}>{active.description}</p>
 
-                  {/* Expand Icon */}
-                  <div className="absolute top-6 right-6 p-3 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Maximize2 className="w-5 h-5" />
-                  </div>
-
-                  {/* Hotspots */}
-                  <div className="absolute bottom-[30%] left-[25%] group/hotspot">
-                    <div className="relative">
-                      <div className="w-6 h-6 rounded-full bg-[#E7717D] border-2 border-white flex items-center justify-center animate-bounce shadow-[0_0_15px_rgba(231,113,125,0.6)]"></div>
-                      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-max bg-black/80 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 text-white text-sm font-medium opacity-0 group-hover/hotspot:opacity-100 transition-opacity pointer-events-none">
-                        300 DPI Pre-Flight Ready
-                      </div>
+                <div className="mt-10 grid gap-8 md:grid-cols-2">
+                  <div>
+                    <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: COLORS.muted }}>Typical jobs</p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                      {active.applications.map((item) => (
+                        <div key={item} className="flex items-center gap-2">
+                          <Check className="h-3.5 w-3.5" style={{ color: COLORS.accent }} />
+                          <span>{item}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-
-                  <div className="absolute top-[40%] right-[30%] group/hotspot">
-                    <div className="relative">
-                      <div className="w-6 h-6 rounded-full bg-[#E7717D] border-2 border-white flex items-center justify-center animate-bounce shadow-[0_0_15px_rgba(231,113,125,0.6)]" style={{animationDelay: '0.2s'}}></div>
-                      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-max bg-black/80 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 text-white text-sm font-medium opacity-0 group-hover/hotspot:opacity-100 transition-opacity pointer-events-none">
-                        Perfect Registration
-                      </div>
-                    </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: COLORS.muted }}>Production focus</p>
+                    <p className="mt-3 text-lg font-bold">{active.process}</p>
                   </div>
-
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="offset-showcase"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.05 }}
-                  transition={{ duration: 0.4 }}
-                  className="absolute inset-0 rounded-[2rem] overflow-hidden border border-white/10 group cursor-pointer shadow-2xl"
-                  onClick={() => setLightboxImage('hadi colors.png')}
-                >
-                  <img src="hadi colors.png" alt="Offset Quality" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1817] via-transparent to-transparent opacity-80"></div>
-                  
-                  {/* Glowing Status */}
-                  <div className="absolute top-6 left-6 flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#AFD275] animate-pulse shadow-[0_0_8px_#AFD275]"></div>
-                    <span className="text-white text-xs font-bold tracking-wide uppercase">Live Preview</span>
-                  </div>
-
-                  {/* Expand Icon */}
-                  <div className="absolute top-6 right-6 p-3 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Maximize2 className="w-5 h-5" />
-                  </div>
-
-                  {/* Hotspots */}
-                  <div className="absolute bottom-[35%] left-[35%] group/hotspot">
-                    <div className="relative">
-                      <div className="w-6 h-6 rounded-full bg-[#AFD275] border-2 border-white flex items-center justify-center animate-bounce shadow-[0_0_15px_rgba(175,210,117,0.6)]"></div>
-                      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-max bg-black/80 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 text-white text-sm font-medium opacity-0 group-hover/hotspot:opacity-100 transition-opacity pointer-events-none">
-                        High-Fidelity Gradients
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute top-[50%] right-[35%] group/hotspot">
-                    <div className="relative">
-                      <div className="w-6 h-6 rounded-full bg-[#AFD275] border-2 border-white flex items-center justify-center animate-bounce shadow-[0_0_15px_rgba(175,210,117,0.6)]" style={{animationDelay: '0.2s'}}></div>
-                      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-max bg-black/80 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 text-white text-sm font-medium opacity-0 group-hover/hotspot:opacity-100 transition-opacity pointer-events-none">
-                        Moisture Resistant Coating
-                      </div>
-                    </div>
-                  </div>
-
-                </motion.div>
-              )}
+                </div>
+              </motion.div>
             </AnimatePresence>
           </div>
         </section>
 
-        {/* 4. LOCAL SOCIAL PROOF BANNER */}
-        <section className="w-full bg-[#22201F]/80 border-y border-white/5 py-10 mt-8 mb-16 backdrop-blur-md relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <p className="text-center text-xs sm:text-sm font-bold text-[#C2CAD0] uppercase tracking-[0.2em] mb-8">
-              Trusted by Gujrat's Leading Textile Mills, Garment Factories & Apparel Brands
-            </p>
-            
-            {/* Ticker / Brands Flex Container */}
-            <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-10 sm:gap-x-20 opacity-60 hover:opacity-100 transition-opacity duration-500 grayscale hover:grayscale-0">
-              
-              {/* GFC Fans (Stylized) */}
-              <div className="flex items-center gap-1.5 select-none">
-                <span className="text-3xl font-black tracking-tighter" style={{ color: COLORS.primary }}>G.F.C</span>
-                <span className="text-sm font-bold tracking-widest mt-1.5 text-white">FANS</span>
+        <section id="capabilities" className="border-y border-white/10" style={{ backgroundColor: COLORS.paper, color: '#161616' }}>
+          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:py-28">
+            <div className="mb-12 flex items-end justify-between gap-6">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.24em]" style={{ color: '#7A6F63' }}>Production capability register</p>
+                <h2 className="mt-4 text-4xl font-black tracking-[-0.04em] sm:text-6xl">What the desk can coordinate.</h2>
               </div>
+            </div>
 
-              {/* Khurshid Fans (Stylized) */}
-              <div className="flex items-center select-none">
-                <span className="text-3xl font-bold italic text-yellow-500 tracking-tight" style={{ textShadow: '1px 1px 0 #000' }}>Khurshid</span>
-                <span className="text-sm font-bold tracking-widest ml-2 mt-1" style={{ color: COLORS.success }}>FANS</span>
-              </div>
-
-              {/* Starco (Stylized) */}
-              <div className="flex items-center gap-2 select-none">
-                <svg className="w-7 h-7 text-red-600" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-                <div className="flex flex-col justify-center">
-                  <span className="text-2xl font-black tracking-widest leading-none text-white">STARCO</span>
-                  <span className="text-[8px] tracking-[0.15em] uppercase text-gray-400 mt-0.5">when performance matters</span>
+            <div className="border-t border-black/15">
+              {capabilityRows.map(({ icon: Icon, title, copy, meta }) => (
+                <div key={title} className="grid gap-5 border-b border-black/15 py-7 md:grid-cols-[48px_220px_1fr_180px] md:items-center">
+                  <div className="grid h-10 w-10 place-items-center rounded-full border border-black/15"><Icon className="h-4 w-4" /></div>
+                  <h3 className="text-xl font-black">{title}</h3>
+                  <p className="max-w-2xl text-sm leading-7 text-black/65">{copy}</p>
+                  <p className="text-[10px] font-bold tracking-[0.18em] text-black/45 md:text-right">{meta}</p>
                 </div>
-              </div>
-
-              {/* Generic Textile/Apparel additions to round out the banner */}
-              <div className="flex items-center select-none">
-                <span className="text-xl font-serif font-bold text-white/90">Gujrat Textiles</span>
-              </div>
-
+              ))}
             </div>
           </div>
         </section>
 
-        {/* CALCULATOR WIDGET (Centered) */}
-        <section id="calculator-section" className="pb-24 px-4 sm:px-6 w-full relative scroll-mt-24">
-          
-          {/* Subtle background glow for the widget */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#E7717D] opacity-[0.03] blur-[100px] rounded-full pointer-events-none"></div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.7 }}
-            className="max-w-[480px] mx-auto w-full"
-          >
-            <div 
-              className="rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden border backdrop-blur-xl"
-              style={{ backgroundColor: `${COLORS.card}E6`, borderColor: 'rgba(255,255,255,0.08)' }}
-            >
-              {/* Header */}
-              <div className="mb-8 text-center">
-                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: COLORS.textSand }}>
-                  Instant Estimator
-                </p>
-                <h3 className="text-2xl font-bold text-white">Dynamic Print Calculator</h3>
-              </div>
-
-              {/* Tabs */}
-              <div className="flex p-1.5 rounded-xl mb-8 bg-black/40 border border-white/5">
-                <button
-                  onClick={() => setActiveTab('dtf')}
-                  className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === 'dtf' ? 'bg-[#E7717D] text-white shadow-lg shadow-[#E7717D]/20' : 'text-[#C2CAD0] hover:text-white'}`}
-                >
-                  <Settings className="w-4 h-4" />
-                  DTF Transfers
-                </button>
-                <button
-                  onClick={() => setActiveTab('offset')}
-                  className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === 'offset' ? 'bg-white/10 text-white border border-white/20' : 'text-[#C2CAD0] hover:text-white'}`}
-                >
-                  <Layers className="w-4 h-4" />
-                  Offset Bulk
-                </button>
-              </div>
-
-              {/* Tab Content */}
-              <div className="min-h-[380px]">
-                <AnimatePresence mode="wait">
-                  {activeTab === 'dtf' ? (
-                    <motion.div
-                      key="dtf"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      transition={{ duration: 0.2 }}
-                      className="space-y-6"
-                    >
-                      {/* Presets */}
-                      <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: COLORS.textSand }}>
-                          Select Size Preset
-                        </label>
-                        <div className="grid grid-cols-3 gap-2">
-                          <button onClick={() => handleApplyPreset(8.27, 11.69)} className={`py-2 px-1 text-xs rounded-lg border transition-all ${dtfWidth === 8.27 && dtfLength === 11.69 ? 'border-[#E7717D] bg-[#E7717D]/10 text-white' : 'border-white/10 text-[#C2CAD0] hover:bg-white/5'}`}>
-                            A4
-                          </button>
-                          <button onClick={() => handleApplyPreset(11.69, 16.53)} className={`py-2 px-1 text-xs rounded-lg border transition-all ${dtfWidth === 11.69 && dtfLength === 16.53 ? 'border-[#E7717D] bg-[#E7717D]/10 text-white' : 'border-white/10 text-[#C2CAD0] hover:bg-white/5'}`}>
-                            A3
-                          </button>
-                          <button onClick={() => handleApplyPreset(24, 36)} className={`py-2 px-1 text-xs rounded-lg border transition-all flex flex-col items-center justify-center gap-1 ${dtfWidth === 24 && dtfLength === 36 ? 'border-[#AFD275] bg-[#AFD275]/10 text-[#AFD275]' : 'border-white/10 text-[#C2CAD0] hover:bg-white/5'}`}>
-                            <span>24" Roll</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Sliders */}
-                      <div className="space-y-5">
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span style={{ color: COLORS.textLight }}>Custom Width (Inches)</span>
-                            <span className="font-bold text-white">{dtfWidth}"</span>
-                          </div>
-                          <input 
-                            type="range" min="2" max="48" step="0.1"
-                            value={dtfWidth} onChange={(e) => setDtfWidth(Number(e.target.value))}
-                            className="w-full h-1.5 bg-black/50 rounded-lg appearance-none cursor-pointer accent-[#E7717D]"
-                          />
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span style={{ color: COLORS.textLight }}>Custom Length (Inches)</span>
-                            <span className="font-bold text-white">{dtfLength}"</span>
-                          </div>
-                          <input 
-                            type="range" min="2" max="120" step="0.1"
-                            value={dtfLength} onChange={(e) => setDtfLength(Number(e.target.value))}
-                            className="w-full h-1.5 bg-black/50 rounded-lg appearance-none cursor-pointer accent-[#AFD275]"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Quantity */}
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: COLORS.textSand }}>
-                            Quantity
-                          </label>
-                          {dtfDiscountStr && (
-                            <span className="text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wide" style={{ backgroundColor: `${COLORS.success}20`, color: COLORS.success }}>
-                              {dtfDiscountStr}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <button onClick={() => setDtfQty(Math.max(1, dtfQty - 1))} className="w-10 h-10 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">-</button>
-                          <input 
-                            type="number" min="1" 
-                            value={dtfQty} onChange={(e) => setDtfQty(Number(e.target.value) || 1)}
-                            className="flex-1 h-10 bg-black/40 border border-white/10 rounded-lg text-center text-white font-bold outline-none focus:border-[#E7717D]"
-                          />
-                          <button onClick={() => setDtfQty(dtfQty + 1)} className="w-10 h-10 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">+</button>
-                        </div>
-                      </div>
-
-                      {/* File Upload */}
-                      <div 
-                        className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${dtfDragActive ? 'border-[#E7717D] bg-[#E7717D]/5' : 'border-white/10 hover:border-white/30 bg-black/20'}`}
-                        onDragOver={(e) => { e.preventDefault(); setDtfDragActive(true); }}
-                        onDragLeave={() => setDtfDragActive(false)}
-                        onDrop={handleFileDrop}
-                        onClick={() => document.getElementById('file-upload')?.click()}
-                      >
-                        <input id="file-upload" type="file" className="hidden" accept=".png,.pdf,.ai" onChange={(e) => e.target.files && setDtfFile(e.target.files[0])} />
-                        {dtfFile ? (
-                          <div className="flex flex-col items-center gap-2">
-                            <ImageIcon className="w-6 h-6" style={{ color: COLORS.success }} />
-                            <span className="text-sm text-white font-medium truncate max-w-[200px]">{dtfFile.name}</span>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center gap-2">
-                            <UploadCloud className="w-6 h-6" style={{ color: COLORS.textSand }} />
-                            <span className="text-sm font-medium text-white">Upload Artwork (.PNG, .PDF, .AI)</span>
-                            <span className="text-[10px]" style={{ color: COLORS.textLight }}>Auto-checking for 300 DPI & transparent background</span>
-                          </div>
-                        )}
-                      </div>
-
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="offset"
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="space-y-6"
-                    >
-                      <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: COLORS.textSand }}>
-                          Product Category
-                        </label>
-                        <select 
-                          value={offsetCategory} 
-                          onChange={(e) => setOffsetCategory(e.target.value)}
-                          className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none outline-none focus:border-[#E7717D]"
-                        >
-                          <option value="Flyers">Flyers & Leaflets</option>
-                          <option value="Business Cards">Business Cards</option>
-                          <option value="Brochures">Brochures & Catalogs</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: COLORS.textSand }}>
-                          Paper Quality
-                        </label>
-                        <select 
-                          value={offsetPaper} 
-                          onChange={(e) => setOffsetPaper(e.target.value)}
-                          className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none outline-none focus:border-[#E7717D]"
-                        >
-                          <option value="130g Gloss">130g Gloss Art Paper</option>
-                          <option value="300g Matte">300g Matte Card</option>
-                          <option value="Textured">Premium Textured</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: COLORS.textSand }}>
-                          Quantity
-                        </label>
-                        <div className="flex items-center gap-3">
-                          <button onClick={() => setOffsetQty(Math.max(500, offsetQty - 500))} className="w-10 h-10 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">-</button>
-                          <input 
-                            type="number" min="500" step="500"
-                            value={offsetQty} onChange={(e) => setOffsetQty(Number(e.target.value) || 500)}
-                            className="flex-1 h-10 bg-black/40 border border-white/10 rounded-lg text-center text-white font-bold outline-none focus:border-[#E7717D]"
-                          />
-                          <button onClick={() => setOffsetQty(offsetQty + 500)} className="w-10 h-10 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">+</button>
-                        </div>
-                      </div>
-                      
-                      <div className="p-4 rounded-xl bg-black/20 border border-white/5 flex items-start gap-3">
-                        <Settings className="w-5 h-5 shrink-0 mt-0.5" style={{ color: COLORS.textSand }} />
-                        <p className="text-xs leading-relaxed" style={{ color: COLORS.textLight }}>
-                          Offset printing incurs a base setup fee of Rs. 1,500. Perfect for massive volume runs with the lowest unit cost.
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Total & Action Footer */}
-              <div className="mt-8 pt-6 border-t border-white/10">
-                <div className="flex items-end justify-between mb-6">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: COLORS.textSand }}>
-                      Estimated Total
-                    </p>
-                    <p className="text-[10px] max-w-[120px] leading-tight" style={{ color: COLORS.textLight }}>
-                      No upfront payment required for quotes
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white flex items-baseline gap-2">
-                      <span className="text-xl font-medium" style={{ color: COLORS.textSand }}>Rs.</span>
-                      {activeTab === 'dtf' ? dtfTotal.toLocaleString() : offsetTotal.toLocaleString()}
-                    </p>
-                  </div>
+        <section id="work" className="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:py-32">
+          <div className="mb-12">
+            <p className="text-xs font-bold uppercase tracking-[0.24em]" style={{ color: COLORS.accent }}>Selected production</p>
+            <h2 className="mt-4 text-4xl font-black tracking-[-0.04em] sm:text-6xl">Work, not decoration.</h2>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            {jobs.map((job, index) => (
+              <article key={job.title} className="group overflow-hidden rounded-[26px] border border-white/10" style={{ backgroundColor: COLORS.surface }}>
+                <div className="h-[300px] overflow-hidden sm:h-[380px]">
+                  <img src={job.img} alt={job.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]" />
                 </div>
-
-                <button 
-                  onClick={sendWhatsApp}
-                  className="w-full py-4 rounded-xl font-bold text-white shadow-xl shadow-[#E7717D]/20 transition-all hover:bg-opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
-                  style={{ backgroundColor: COLORS.primary }}
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Send Quote via WhatsApp
-                  <ArrowRight className="w-5 h-5 opacity-80" />
-                </button>
-              </div>
-
-            </div>
-          </motion.div>
+                <div className="flex items-end justify-between gap-5 p-6">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: COLORS.muted }}>0{index + 1}</p>
+                    <h3 className="mt-2 text-xl font-black">{job.title}</h3>
+                    <p className="mt-2 text-sm" style={{ color: COLORS.muted }}>{job.meta}</p>
+                  </div>
+                  <PackageOpen className="h-5 w-5 shrink-0" style={{ color: COLORS.accent }} />
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
 
+        <section className="border-y border-white/10" style={{ backgroundColor: COLORS.surface }}>
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-24 sm:px-8 lg:grid-cols-[.8fr_1.2fr] lg:py-28">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.24em]" style={{ color: COLORS.accent }}>Artwork check</p>
+              <h2 className="mt-4 text-4xl font-black tracking-[-0.04em] sm:text-5xl">Before you send the file.</h2>
+              <p className="mt-5 max-w-md text-sm leading-7" style={{ color: COLORS.muted }}>
+                A few simple checks can prevent delays before production.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                ['File format', 'PDF is preferred for most print-ready artwork.'],
+                ['Colour', 'Prepare print artwork in CMYK where applicable.'],
+                ['Bleed', 'Include bleed where artwork reaches the trimmed edge.'],
+                ['Resolution', 'Images should be suitable for print at final size.'],
+                ['Fonts', 'Embed fonts or convert important typography to outlines.'],
+                ['Size', 'Artwork should match the intended finished dimensions.'],
+              ].map(([title, copy]) => (
+                <div key={title} className="rounded-2xl border border-white/10 bg-black/20 p-5">
+                  <p className="font-bold">{title}</p>
+                  <p className="mt-2 text-sm leading-6" style={{ color: COLORS.muted }}>{copy}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="process" className="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:py-32">
+          <div className="mb-14 max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-[0.24em]" style={{ color: COLORS.accent }}>How a job moves through Jubbir</p>
+            <h2 className="mt-4 text-4xl font-black tracking-[-0.04em] sm:text-6xl">Clear stages. Fewer surprises.</h2>
+          </div>
+
+          <div className="border-t border-white/10">
+            {timeline.map(([number, title, copy]) => (
+              <div key={number} className="grid gap-4 border-b border-white/10 py-6 md:grid-cols-[70px_220px_1fr] md:items-center">
+                <span className="text-xs font-bold tracking-[0.18em]" style={{ color: COLORS.accent }}>{number}</span>
+                <h3 className="text-xl font-black">{title}</h3>
+                <p className="max-w-2xl text-sm leading-7" style={{ color: COLORS.muted }}>{copy}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="px-5 pb-24 sm:px-8 lg:pb-32">
+          <div className="mx-auto max-w-7xl overflow-hidden rounded-[34px] border border-white/10 p-8 sm:p-12 lg:p-16" style={{ backgroundColor: COLORS.accent }}>
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.22em] text-black/55">Start a job</p>
+                <h2 className="mt-4 max-w-3xl text-4xl font-black tracking-[-0.045em] text-black sm:text-6xl">
+                  Have something to print?
+                </h2>
+                <p className="mt-5 max-w-2xl text-base leading-7 text-black/70">
+                  Give us the essentials. We will review the details before confirming production.
+                </p>
+              </div>
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className="flex items-center justify-center gap-2 rounded-full bg-black px-7 py-4 text-sm font-black text-white"
+              >
+                Start a Job <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </section>
       </main>
 
-      {/* Lightbox Modal */}
+      <footer className="border-t border-white/10 bg-black/20">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-3">
+          <div>
+            <p className="font-black tracking-[0.14em]">JUBBIR PRINTERS</p>
+            <p className="mt-3 text-sm leading-6" style={{ color: COLORS.muted }}>
+              Commercial Print / Packaging / DTF Transfers / Custom Production
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: COLORS.muted }}>Production desk</p>
+            <div className="mt-4 space-y-2 text-sm">
+              <a href="#services" className="block">Services</a>
+              <a href="#capabilities" className="block">Capabilities</a>
+              <a href="#work" className="block">Selected work</a>
+              <a href="#process" className="block">Process</a>
+            </div>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: COLORS.muted }}>Closing line</p>
+            <p className="mt-4 text-xl font-black">From supplied artwork to finished production.</p>
+          </div>
+        </div>
+      </footer>
+
       <AnimatePresence>
-        {lightboxImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 sm:p-8"
-            onClick={() => setLightboxImage(null)}
-          >
-            <button 
-              className="absolute top-6 right-6 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
-              onClick={() => setLightboxImage(null)}
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <motion.img 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              src={lightboxImage} 
-              alt="Expanded view" 
-              className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl border border-white/10"
-              onClick={(e) => e.stopPropagation()}
+        {drawerOpen && (
+          <>
+            <motion.button
+              aria-label="Close job drawer"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDrawerOpen(false)}
+              className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm"
             />
-          </motion.div>
+            <motion.aside
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 260 }}
+              className="fixed right-0 top-0 z-[80] h-full w-full max-w-xl overflow-y-auto border-l border-white/10 p-6 sm:p-8"
+              style={{ backgroundColor: COLORS.bg }}
+            >
+              <div className="flex items-start justify-between gap-5">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: COLORS.accent }}>Fast request</p>
+                  <h2 className="mt-3 text-3xl font-black tracking-[-0.03em]">Start a Job</h2>
+                  <p className="mt-3 text-sm leading-6" style={{ color: COLORS.muted }}>
+                    Give us the essentials. The production team can review the job before quotation.
+                  </p>
+                </div>
+                <button onClick={() => setDrawerOpen(false)} className="rounded-full border border-white/10 p-2.5">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <form className="mt-9 space-y-5" onSubmit={(e) => e.preventDefault()}>
+                {[
+                  ['Your name', 'text'],
+                  ['Business name', 'text'],
+                  ['Phone / WhatsApp', 'tel'],
+                  ['What are you printing?', 'text'],
+                  ['Finished size', 'text'],
+                  ['Quantity', 'number'],
+                  ['Material preference', 'text'],
+                  ['Finishing requirement', 'text'],
+                ].map(([label, type]) => (
+                  <label key={label} className="block">
+                    <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: COLORS.muted }}>{label}</span>
+                    <input
+                      type={type}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/30"
+                    />
+                  </label>
+                ))}
+
+                <label className="block">
+                  <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: COLORS.muted }}>Additional notes</span>
+                  <textarea rows={4} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/30" />
+                </label>
+
+                <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.03] p-5 text-center">
+                  <UploadCloud className="mx-auto h-5 w-5" style={{ color: COLORS.accent }} />
+                  <p className="mt-2 text-sm font-bold">Artwork upload slot</p>
+                  <p className="mt-1 text-xs" style={{ color: COLORS.muted }}>Connect production upload handling before launch.</p>
+                </div>
+
+                <button
+                  type="submit"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl py-4 text-sm font-black text-white"
+                  style={{ backgroundColor: COLORS.accent }}
+                >
+                  Submit Job <ArrowRight className="h-4 w-4" />
+                </button>
+
+                <div className="flex items-center justify-center gap-2 text-xs" style={{ color: COLORS.muted }}>
+                  <MessageCircle className="h-4 w-4" />
+                  WhatsApp routing can be connected after the production number is confirmed.
+                </div>
+              </form>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
