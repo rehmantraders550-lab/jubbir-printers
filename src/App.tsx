@@ -15,6 +15,9 @@ import {
   Zap,
 } from 'lucide-react';
 import dtfImage from './assets/images/regenerated_image_1789311660499.jpg';
+import bannerImage from '../banner.png';
+import materialSpecimensImage from '../material-specimens.jpg';
+import flatbedImage from '../hdc-flatbed.png';
 
 const COLORS = {
   bg: '#171717',
@@ -103,10 +106,10 @@ const capabilityRows = [
 ];
 
 const jobs = [
-  { title: 'Retail Carton', meta: 'Offset / Printed board / Matte lamination', img: 'banner.png' },
+  { title: 'Retail Carton', meta: 'Offset / Printed board / Matte lamination', img: bannerImage },
   { title: 'DTF Transfer', meta: 'Full colour / Gang sheet / Apparel', img: dtfImage },
-  { title: 'Commercial Brochure', meta: 'Offset / Coated paper / Folded', img: 'hadi colors.png' },
-  { title: 'Product Labels', meta: 'Adhesive stock / Full colour / Custom cut', img: 'banner.png' },
+  { title: 'Commercial Brochure', meta: 'Offset / Coated paper / Folded', img: materialSpecimensImage },
+  { title: 'Product Labels', meta: 'Adhesive stock / Full colour / Custom cut', img: flatbedImage },
 ];
 
 const timeline = [
@@ -164,7 +167,7 @@ export default function App() {
       <main>
         <section className="relative overflow-hidden border-b border-white/10">
           <div className="absolute inset-0">
-            <img src="banner.png" alt="Print production" className="h-full w-full object-cover opacity-35" />
+            <img src={bannerImage} alt="Print production" className="h-full w-full object-cover opacity-35" />
             <div className="absolute inset-0 bg-[linear-gradient(90deg,#171717_0%,rgba(23,23,23,.94)_42%,rgba(23,23,23,.58)_100%)]" />
           </div>
 
