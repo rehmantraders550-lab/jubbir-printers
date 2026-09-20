@@ -1,9 +1,9 @@
 import type { LucideIcon } from 'lucide-react';
 import { FileCheck2, Layers3, Printer, Scissors } from 'lucide-react';
-import bannerImage from '../banner.png';
-import flatbedImage from '../hdc-flatbed.png';
-import materialSpecimensImage from '../material-specimens.jpg';
-import dtfImage from './assets/images/regenerated_image_1789311660499.jpg';
+import brochureImage from './assets/images/jubbir-brochure-v2.webp';
+import dtfImage from './assets/images/jubbir-dtf-transfer-v2.webp';
+import labelsImage from './assets/images/jubbir-labels-v2.webp';
+import retailCartonImage from './assets/images/jubbir-retail-carton-v2.webp';
 
 export type ServiceKey = 'commercial' | 'packaging' | 'dtf' | 'custom';
 
@@ -96,8 +96,8 @@ export const productionJobs = [
     title: 'Retail Carton',
     category: 'Packaging',
     meta: 'Offset / Printed board / Matte lamination',
-    image: bannerImage,
-    alt: 'Printed retail carton moving through a commercial print production line',
+    image: retailCartonImage,
+    alt: 'Assembled and flat retail cartons on a commercial print finishing table',
     className: 'proof-card--primary',
   },
   {
@@ -105,23 +105,23 @@ export const productionJobs = [
     category: 'Transfer',
     meta: 'Full colour / Gang sheet / Apparel',
     image: dtfImage,
-    alt: 'Full-colour DTF transfer samples prepared for apparel application',
+    alt: 'Full-colour DTF gang sheet emerging from a professional roll printer',
     className: 'proof-card--secondary',
   },
   {
     title: 'Commercial Brochure',
     category: 'Commercial',
     meta: 'Offset / Coated paper / Folded',
-    image: materialSpecimensImage,
-    alt: 'Printed commercial brochure and paper specimens',
+    image: brochureImage,
+    alt: 'Stacks of finished commercial brochures beside print finishing equipment',
     className: 'proof-card--tertiary',
   },
   {
     title: 'Product Labels',
     category: 'Labels',
     meta: 'Adhesive stock / Full colour / Custom cut',
-    image: flatbedImage,
-    alt: 'Custom printed product labels on a production flatbed',
+    image: labelsImage,
+    alt: 'Custom product labels being contour-cut on a professional flatbed cutter',
     className: 'proof-card--quaternary',
   },
 ];

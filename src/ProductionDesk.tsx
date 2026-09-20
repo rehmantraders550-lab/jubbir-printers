@@ -13,7 +13,7 @@ import {
   services,
   type ServiceKey,
 } from './data';
-import bannerImage from '../banner.png';
+import heroImage from './assets/images/jubbir-hero-v2.webp';
 
 const navigation = [
   ['Services', '#services'],
@@ -135,7 +135,7 @@ export default function ProductionDesk() {
             </motion.div>
 
             <div className="hero-visual">
-              <img src={bannerImage} alt="Commercial printing in production at Jubbir Printers" />
+              <img src={heroImage} alt="Commercial offset press producing full-colour printed sheets" />
               <div className="hero-scrim" aria-hidden="true" />
               <div className="desk-register" aria-label="Production desk stages">
                 <div className="desk-register__head">
