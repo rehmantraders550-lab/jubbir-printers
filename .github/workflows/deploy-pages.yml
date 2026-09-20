@@ -1,9 +1,7 @@
 name: Deploy Jubbir Printers to GitHub Pages
 
+# Manual fallback only. The gh-pages branch publisher is the canonical live path.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
