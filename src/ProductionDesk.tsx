@@ -181,7 +181,7 @@ export default function ProductionDesk() {
                     type="button"
                     role="tab"
                     aria-selected={activeService === key}
-                    aria-controls={`service-panel-${key}`}
+                    aria-controls="service-panel"
                     tabIndex={activeService === key ? 0 : -1}
                     className={activeService === key ? 'is-active' : ''}
                     onClick={() => setActiveService(key)}
@@ -197,7 +197,7 @@ export default function ProductionDesk() {
             <AnimatePresence mode="wait">
               <motion.article
                 key={activeService}
-                id={`service-panel-${activeService}`}
+                id="service-panel"
                 role="tabpanel"
                 aria-labelledby={`service-tab-${activeService}`}
                 className="service-panel"
