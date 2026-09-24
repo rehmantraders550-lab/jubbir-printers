@@ -637,8 +637,8 @@ img {
 }
 
 .capabilities {
-  background: var(--ink);
-  color: var(--white);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .section-head {
@@ -659,11 +659,11 @@ img {
 }
 
 .section-head--dark > p {
-  color: var(--muted-dark);
+  color: var(--muted);
 }
 
 .capability-list {
-  border-top: 1px solid rgb(255 255 255 / 16%);
+  border-top: 1px solid rgb(23 23 23 / 16%);
 }
 
 .capability-row {
@@ -672,7 +672,7 @@ img {
   gap: 19px;
   align-items: center;
   padding-block: 26px;
-  border-bottom: 1px solid rgb(255 255 255 / 16%);
+  border-bottom: 1px solid rgb(23 23 23 / 16%);
 }
 
 .capability-number {
@@ -687,7 +687,7 @@ img {
   width: 42px;
   height: 42px;
   place-items: center;
-  border: 1px solid rgb(255 255 255 / 20%);
+  border: 1px solid rgb(23 23 23 / 18%);
   border-radius: 50%;
 }
 
@@ -707,13 +707,13 @@ img {
 }
 
 .capability-row p {
-  color: #c1bbb2;
+  color: rgb(23 23 23 / 66%);
   font-size: 13px;
   line-height: 1.7;
 }
 
 .capability-row small {
-  color: #8e887f;
+  color: rgb(23 23 23 / 48%);
   font-size: 9px;
   font-weight: 850;
   letter-spacing: 0.15em;

@@ -135,7 +135,12 @@ export default function ProductionDesk() {
             </motion.div>
 
             <div className="hero-visual">
-              <img src={heroImage} alt="Commercial offset press producing full-colour printed sheets" />
+              <img
+                src={heroImage}
+                alt="Commercial offset press producing full-colour printed sheets"
+                fetchPriority="high"
+                decoding="async"
+              />
               <div className="hero-scrim" aria-hidden="true" />
               <div className="desk-register" aria-label="Production desk stages">
                 <div className="desk-register__head">
@@ -258,7 +263,7 @@ export default function ProductionDesk() {
             <div className="proof-wall">
               {productionJobs.map((job, index) => (
                 <article className={`proof-card ${job.className}`} key={job.title}>
-                  <img src={job.image} alt={job.alt} loading={index === 0 ? 'eager' : 'lazy'} />
+                  <img src={job.image} alt={job.alt} loading="lazy" decoding="async" />
                   <div className="proof-card__scrim" aria-hidden="true" />
                   <div className="proof-card__meta">
                     <small>0{index + 1} / {job.category}</small>
