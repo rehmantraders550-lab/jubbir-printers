@@ -19,8 +19,9 @@ const navigation = [
   ['Services', '#services'],
   ['Products', './products.html'],
   ['Capabilities', './capabilities.html'],
-  ['Work', '#work'],
-  ['Process', '#process'],
+  ['Work', './work.html'],
+  ['Artwork', './artwork-guide.html'],
+  ['Process', './process.html'],
 ] as const;
 
 export default function ProductionDesk() {
