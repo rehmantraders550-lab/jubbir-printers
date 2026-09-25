@@ -224,6 +224,9 @@ export default function ProductionDesk() {
                     <strong>{active.process}</strong>
                   </div>
                 </div>
+                <a className="button button--accent" href={active.href}>
+                  Explore {active.label} <ChevronRight aria-hidden="true" />
+                </a>
               </motion.article>
             </AnimatePresence>
           </div>

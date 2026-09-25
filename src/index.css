@@ -636,6 +636,10 @@ img {
   line-height: 1.4;
 }
 
+.service-panel > .button {
+  margin-top: 30px;
+}
+
 .capabilities {
   background: var(--paper);
   color: var(--ink);

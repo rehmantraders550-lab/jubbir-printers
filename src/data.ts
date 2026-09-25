@@ -14,6 +14,7 @@ export type Service = {
   description: string;
   applications: string[];
   process: string;
+  href: string;
 };
 
 export const serviceOrder: ServiceKey[] = ['commercial', 'packaging', 'dtf', 'custom'];
@@ -27,6 +28,7 @@ export const services: Record<ServiceKey, Service> = {
       'Business stationery, flyers, brochures, catalogues, menus, tags and repeat print runs managed with a production-first approach.',
     applications: ['Business cards', 'Flyers', 'Brochures', 'Menus', 'Tags', 'Stationery'],
     process: 'Offset / short-run production',
+    href: './commercial-print.html',
   },
   packaging: {
     label: 'Packaging',
@@ -36,6 +38,7 @@ export const services: Record<ServiceKey, Service> = {
       'Printed cartons, sleeves, labels and retail packaging developed around artwork, stock, finishing and the physical requirements of the job.',
     applications: ['Product cartons', 'Sleeves', 'Labels', 'Hang tags', 'Bakery packs', 'Retail packs'],
     process: 'Print / finish / convert',
+    href: './packaging.html',
   },
   dtf: {
     label: 'DTF Transfers',
@@ -45,6 +48,7 @@ export const services: Record<ServiceKey, Service> = {
       'Full-colour DTF transfers for apparel, uniforms, merchandise and branded textile applications, including short runs and gang-sheet production.',
     applications: ['Logos', 'Chest prints', 'Back prints', 'Uniform graphics', 'Merchandise', 'Gang sheets'],
     process: 'DTF transfer production',
+    href: './dtf-transfers.html',
   },
   custom: {
     label: 'Custom Production',
@@ -54,6 +58,7 @@ export const services: Record<ServiceKey, Service> = {
       'Unusual dimensions, mixed requirements, prototypes, custom finishing and production jobs that need a more direct conversation before quoting.',
     applications: ['Odd sizes', 'Prototype runs', 'Mixed materials', 'Special finishing', 'Bulk jobs', 'Custom formats'],
     process: 'Specification-led production',
+    href: './custom-production.html',
   },
 };
 
