@@ -13,7 +13,7 @@ const nav = [
 
 type InteriorShellProps = {
   children: ReactNode;
-  current: 'Products' | 'Capabilities';
+  current?: 'Products' | 'Capabilities';
 };
 
 export function InteriorShell({ children, current }: InteriorShellProps) {
