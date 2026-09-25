@@ -4,7 +4,7 @@ import { artworkChecks } from './data';
 
 export default function ArtworkGuidePage() {
   return (
-    <InteriorShell current="Artwork Guide">
+    <InteriorShell current="Artwork">
       <section className="interior-hero">
         <div className="site-wrap interior-hero__grid">
           <div>
