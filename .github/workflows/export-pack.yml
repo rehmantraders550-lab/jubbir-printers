@@ -1,0 +1,129 @@
+name: Export Jubbir Website Pack
+
+on:
+  push:
+    branches:
+      - orvia-export-pack-20260925
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact production main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate TypeScript
+        run: npm run lint
+
+      - name: Build portable static site
+        run: npm run build -- --base=./
+
+      - name: Assemble migration pack
+        shell: bash
+        run: |
+          mkdir -p export/jubbir-printers-wave3/source
+          mkdir -p export/jubbir-printers-wave3/deploy-static
+
+          rsync -a \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            --exclude='export' \
+            ./ export/jubbir-printers-wave3/source/
+
+          cp -R dist/. export/jubbir-printers-wave3/deploy-static/
+
+          cat > export/jubbir-printers-wave3/VERSION.txt <<'EOF'
+          JUBBIR PRINTERS — WEBSITE MIGRATION PACK
+          Production source SHA: 9e7c7bf4f045a8e7b00b4a649d8e079edb1502f9
+          Wave status: Wave 1 + Wave 2 + Wave 3
+          Export date: 2026-09-25
+          Static build base: ./
+          EOF
+
+          cat > export/jubbir-printers-wave3/DEPLOYMENT_README.md <<'EOF'
+          # Jubbir Printers — Deployment Pack
+
+          This pack contains the current Wave 1 + Wave 2 + Wave 3 website.
+
+          ## Folders
+
+          ### deploy-static/
+          Ready-to-upload static website.
+
+          Use this folder when the destination host accepts ordinary HTML/CSS/JS files.
+          Upload the CONTENTS of deploy-static/ into the destination web root such as:
+          - public_html/ on Hostinger
+          - a static-site directory on another shared host
+          - Netlify Drop / static publish directory
+          - any CDN/static server
+
+          The static build uses relative asset paths (base ./) to improve portability.
+
+          ### source/
+          Editable React + Vite source.
+
+          To rebuild:
+          1. Install Node.js 20.
+          2. Run: npm install
+          3. Validate: npm run lint
+          4. Portable build: npm run build -- --base=./
+          5. Deploy the generated dist/ directory.
+
+          ## Current pages
+
+          - index.html — Homepage / Production Desk
+          - products.html — Products
+          - capabilities.html — Capabilities
+          - commercial-print.html — Commercial Print
+          - packaging.html — Packaging
+          - dtf-transfers.html — DTF Transfers
+          - custom-production.html — Custom Production
+          - work.html — Selected Work
+          - artwork-guide.html — Artwork Guide
+          - process.html — Process
+          - start-a-job.html — Start a Job preparation page
+
+          ## Important behavior
+
+          The Start-a-Job interface currently prepares a structured job brief locally in the browser.
+          Artwork/reference file selection stays on the user's device and is not uploaded.
+          Online submission, artwork routing and WhatsApp/backend delivery are not connected.
+
+          ## Migration rule
+
+          Do not upload the source/ folder as the public website unless the destination is configured to build Vite.
+          For ordinary shared/static hosting, publish only the contents of deploy-static/.
+
+          ## Production reference
+
+          Source commit:
+          9e7c7bf4f045a8e7b00b4a649d8e079edb1502f9
+          EOF
+
+          cd export
+          zip -r jubbir-printers-wave3-pack.zip jubbir-printers-wave3
+
+      - name: Upload migration pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: jubbir-printers-wave3-pack
+          path: export/jubbir-printers-wave3-pack.zip
+          retention-days: 30
