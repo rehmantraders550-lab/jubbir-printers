@@ -229,7 +229,7 @@ export default function ServiceDetailPage({ service }: { service: ServicePageKey
           <div className="service-proof-grid">
             {config.gallery.map(({ image, alt, label, meta }, index) => (
               <figure className={index === 0 ? 'service-proof-grid__feature' : ''} key={label}>
-                <img src={image} alt={alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+                <img src={image} alt={alt} loading="lazy" decoding="async" />
                 <figcaption><span>{label}</span><strong>{meta}</strong></figcaption>
               </figure>
             ))}
