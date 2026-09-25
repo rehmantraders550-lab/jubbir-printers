@@ -7,13 +7,14 @@ const nav = [
   ['Home', './index.html'],
   ['Products', './products.html'],
   ['Capabilities', './capabilities.html'],
-  ['Work', './index.html#work'],
-  ['Process', './index.html#process'],
+  ['Work', './work.html'],
+  ['Artwork', './artwork-guide.html'],
+  ['Process', './process.html'],
 ] as const;
 
 type InteriorShellProps = {
   children: ReactNode;
-  current?: 'Products' | 'Capabilities';
+  current?: 'Products' | 'Capabilities' | 'Work' | 'Artwork' | 'Process' | 'Start a Job';
 };
 
 export function InteriorShell({ children, current }: InteriorShellProps) {
@@ -90,7 +91,8 @@ export function InteriorShell({ children, current }: InteriorShellProps) {
           </div>
           <nav aria-label="Footer navigation">
             <p className="micro-label">Production desk</p>
-            {nav.slice(0, 3).map(([label, href]) => <a key={label} href={href}>{label}</a>)}
+            {nav.slice(1).map(([label, href]) => <a key={label} href={href}>{label}</a>)}
+            <a href="./start-a-job.html">Start a Job</a>
           </nav>
           <div>
             <p className="micro-label">Closing line</p>
