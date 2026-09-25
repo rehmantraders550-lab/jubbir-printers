@@ -17,7 +17,8 @@ import heroImage from './assets/images/jubbir-hero-v2.webp';
 
 const navigation = [
   ['Services', '#services'],
-  ['Capabilities', '#capabilities'],
+  ['Products', './products.html'],
+  ['Capabilities', './capabilities.html'],
   ['Work', '#work'],
   ['Process', '#process'],
 ] as const;
