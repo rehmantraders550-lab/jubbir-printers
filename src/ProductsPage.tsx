@@ -14,6 +14,7 @@ const families = [
     image: brochureImage,
     alt: 'Finished commercial brochures beside print production equipment',
     icon: FileText,
+    href: './commercial-print.html',
   },
   {
     number: '02',
@@ -23,6 +24,7 @@ const families = [
     image: cartonImage,
     alt: 'Printed retail cartons shown as finished and flat production pieces',
     icon: PackageOpen,
+    href: './packaging.html',
   },
   {
     number: '03',
@@ -32,6 +34,7 @@ const families = [
     image: dtfImage,
     alt: 'Full-colour DTF gang sheet emerging from a roll printer',
     icon: Shirt,
+    href: './dtf-transfers.html',
   },
   {
     number: '04',
@@ -41,6 +44,7 @@ const families = [
     image: labelsImage,
     alt: 'Custom printed labels being contour-cut on production equipment',
     icon: Box,
+    href: './custom-production.html',
   },
 ] as const;
 
@@ -74,7 +78,7 @@ export default function ProductsPage() {
           </div>
 
           <div className="product-family-stack">
-            {families.map(({ number, title, copy, items, image, alt, icon: Icon }, index) => (
+            {families.map(({ number, title, copy, items, image, alt, icon: Icon, href }, index) => (
               <article className="product-family" key={title}>
                 <div className="product-family__visual">
                   <img src={image} alt={alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
@@ -89,6 +93,7 @@ export default function ProductsPage() {
                     </div>
                   </div>
                   <p>{copy}</p>
+                  <a className="text-link" href={href}>Explore production route <ArrowRight aria-hidden="true" /></a>
                   <div className="product-item-grid" aria-label={`${title} examples`}>
                     {items.map((item, itemIndex) => (
                       <span key={item}><small>{String(itemIndex + 1).padStart(2, '0')}</small>{item}</span>
