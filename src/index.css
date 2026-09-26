@@ -1607,3 +1607,239 @@ img {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ==========================================================================
+   ORVIA REFINEMENT WAVE 4 — PRODUCTION DESK HOME
+   Scope: visual/readability/responsive surgery only.
+   Governing rules: preserve semantics, content, routes, imagery and behavior.
+   ========================================================================== */
+
+.production-desk-home {
+  --orvia-home-radius-panel: 18px;
+  --orvia-home-radius-media: 16px;
+  --orvia-home-radius-register: 12px;
+}
+
+/* Robust skip-link containment: keyboard reachable, visually absent otherwise. */
+.skip-link {
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  transform: none;
+  transition: none;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  border-radius: 8px;
+  padding: 12px 16px;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Hero: protect headline measure while retaining the editorial split. */
+.production-desk-home .hero-grid {
+  min-height: 680px;
+  grid-template-columns: minmax(0, 1.06fr) minmax(460px, 0.94fr);
+}
+
+.production-desk-home .hero-copy {
+  padding-right: clamp(38px, 5vw, 82px);
+}
+
+.production-desk-home .hero h1 {
+  max-width: 680px;
+  font-size: clamp(58px, 6.6vw, 104px);
+  line-height: 0.9;
+}
+
+.production-desk-home .hero-lead {
+  max-width: 590px;
+  font-size: 16px;
+  line-height: 1.68;
+}
+
+.production-desk-home .desk-register {
+  border-radius: var(--orvia-home-radius-register);
+}
+
+/* Service master-detail: keep tab semantics, reduce app-card softness. */
+.production-desk-home .service-panel {
+  min-height: 490px;
+  border-radius: var(--orvia-home-radius-panel);
+  box-shadow: 0 18px 52px rgb(23 23 23 / 4.5%);
+}
+
+.production-desk-home .service-description {
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.production-desk-home .service-tabs button small,
+.production-desk-home .micro-label {
+  font-size: 10px;
+}
+
+.production-desk-home .service-details li {
+  font-size: 14px;
+}
+
+/* Raise the secondary-text floor without flattening hierarchy. */
+.production-desk-home .section-intro > p:last-of-type,
+.production-desk-home .section-head > p,
+.production-desk-home .artwork-intro > p:last-child,
+.production-desk-home .process-head > p {
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.production-desk-home .capability-row p {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.production-desk-home .capability-row small {
+  color: rgb(23 23 23 / 60%);
+  font-size: 10px;
+}
+
+.production-desk-home .artwork-register article > span {
+  font-size: 10px;
+}
+
+.production-desk-home .artwork-register h3 {
+  font-size: 17px;
+}
+
+.production-desk-home .artwork-register p {
+  font-size: 14px;
+  line-height: 1.62;
+}
+
+.production-desk-home .process-register p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Media evidence: retain mosaic hierarchy, regularise geometry and captions. */
+.production-desk-home .proof-card {
+  border-radius: var(--orvia-home-radius-media);
+}
+
+.production-desk-home .proof-card__scrim {
+  background: linear-gradient(180deg, transparent 38%, rgb(0 0 0 / 72%) 100%);
+}
+
+.production-desk-home .proof-card__meta small {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.production-desk-home .proof-card__meta p {
+  font-size: 13px;
+  opacity: 0.88;
+}
+
+/* Conversion field: strong interruption without a separate visual language. */
+.production-desk-home .final-cta {
+  border-radius: var(--orvia-home-radius-panel);
+}
+
+.production-desk-home .footer-bottom {
+  font-size: 9px;
+}
+
+/* Tablet: recompose rather than proportionally shrinking desktop. */
+@media (max-width: 860px) {
+  .production-desk-home .hero-copy {
+    min-height: auto;
+    padding: 72px 32px 64px;
+  }
+
+  .production-desk-home .hero-visual {
+    min-height: 520px;
+  }
+
+  .production-desk-home .service-layout {
+    gap: 46px;
+  }
+
+  .production-desk-home .service-panel {
+    min-height: auto;
+  }
+}
+
+/* Mobile: reduce vertical bloat and protect reading comfort. */
+@media (max-width: 620px) {
+  .production-desk-home .hero-copy {
+    min-height: auto;
+    padding: 56px 20px 50px;
+  }
+
+  .production-desk-home .hero h1 {
+    max-width: 11ch;
+    font-size: clamp(46px, 14.5vw, 62px);
+    line-height: 0.92;
+  }
+
+  .production-desk-home .hero-lead {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .production-desk-home .hero-visual {
+    min-height: clamp(360px, 105vw, 460px);
+  }
+
+  .production-desk-home .section {
+    padding-block: 68px;
+  }
+
+  .production-desk-home .section-intro h2,
+  .production-desk-home .section-head h2,
+  .production-desk-home .final-cta h2 {
+    font-size: clamp(40px, 11.8vw, 52px);
+    line-height: 0.98;
+  }
+
+  .production-desk-home .service-panel {
+    border-radius: 14px;
+    padding: 26px 20px;
+  }
+
+  .production-desk-home .service-panel h3 {
+    font-size: 34px;
+    line-height: 1;
+  }
+
+  .production-desk-home .proof-card,
+  .production-desk-home .proof-card--primary,
+  .production-desk-home .proof-card--tertiary {
+    min-height: 320px;
+    border-radius: 12px;
+  }
+
+  .production-desk-home .final-cta {
+    border-radius: 14px;
+    padding: 30px 20px;
+  }
+
+  .production-desk-home .process-register p {
+    font-size: 13.5px;
+  }
+}
+

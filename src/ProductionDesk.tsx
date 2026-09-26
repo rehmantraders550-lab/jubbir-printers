@@ -55,7 +55,7 @@ export default function ProductionDesk() {
   };
 
   return (
-    <div className="site-shell">
+    <div className="site-shell production-desk-home">
       <a className="skip-link" href="#main-content">Skip to content</a>
 
       <header className="site-header">
