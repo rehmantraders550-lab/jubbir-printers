@@ -1662,9 +1662,21 @@ img {
 }
 
 .production-desk-home .hero h1 {
-  max-width: 680px;
-  font-size: clamp(58px, 6.6vw, 104px);
-  line-height: 0.9;
+  max-width: none;
+  font-size: clamp(56px, 6.15vw, 94px);
+  line-height: 0.86;
+}
+
+.production-desk-home .hero-title-line {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.production-desk-home .hero-title-line--long {
+  font-size: 0.94em;
+  letter-spacing: -0.062em;
 }
 
 .production-desk-home .hero-lead {
@@ -1791,9 +1803,13 @@ img {
   }
 
   .production-desk-home .hero h1 {
-    max-width: 11ch;
-    font-size: clamp(46px, 14.5vw, 62px);
-    line-height: 0.92;
+    max-width: none;
+    font-size: clamp(44px, 13.8vw, 58px);
+    line-height: 0.9;
+  }
+
+  .production-desk-home .hero-title-line--long {
+    font-size: 0.92em;
   }
 
   .production-desk-home .hero-lead {
