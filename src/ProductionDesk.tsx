@@ -122,7 +122,11 @@ export default function ProductionDesk() {
               transition={{ duration: reduceMotion ? 0 : 0.55 }}
             >
               <p className="eyebrow">Commercial Print / Packaging / DTF / Custom Production</p>
-              <h1>Printing made straightforward.</h1>
+              <h1 className="hero-title" aria-label="Printing made straightforward.">
+                <span className="hero-title-line">Printing</span>
+                <span className="hero-title-line">made</span>
+                <span className="hero-title-line hero-title-line--long">straightforward.</span>
+              </h1>
               <p className="hero-lead">
                 Send your specification, quantity and artwork. We review the job, define the production route and move it forward from one desk.
               </p>
