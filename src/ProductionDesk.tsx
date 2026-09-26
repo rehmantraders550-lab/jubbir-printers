@@ -6,7 +6,6 @@ import {
   artworkChecks,
   capabilities,
   deskStages,
-  jobTypes,
   processSteps,
   productionJobs,
   serviceOrder,
@@ -14,6 +13,21 @@ import {
   type ServiceKey,
 } from './data';
 import heroImage from './assets/images/jubbir-hero-v2.webp';
+import brochureImage from './assets/images/jubbir-brochure-v2.webp';
+import dtfImage from './assets/images/jubbir-dtf-transfer-v2.webp';
+import labelsImage from './assets/images/jubbir-labels-v2.webp';
+import cartonImage from './assets/images/jubbir-retail-carton-v2.webp';
+
+const homepageProducts = [
+  { title: 'Business Cards', route: 'Commercial Print', image: brochureImage, href: './commercial-print.html' },
+  { title: 'Packaging', route: 'Packaging', image: cartonImage, href: './packaging.html' },
+  { title: 'Labels', route: 'Custom Production', image: labelsImage, href: './custom-production.html' },
+  { title: 'Brochures', route: 'Commercial Print', image: brochureImage, href: './commercial-print.html' },
+  { title: 'DTF Transfers', route: 'DTF Transfers', image: dtfImage, href: './dtf-transfers.html' },
+  { title: 'Stationery', route: 'Commercial Print', image: brochureImage, href: './commercial-print.html' },
+  { title: 'Bulk Printing', route: 'Custom Production', image: brochureImage, href: './custom-production.html' },
+  { title: 'Custom Jobs', route: 'Custom Production', image: labelsImage, href: './custom-production.html' },
+] as const;
 
 const navigation = [
   ['Services', '#services'],
@@ -162,11 +176,20 @@ export default function ProductionDesk() {
           </div>
         </section>
 
-        <div className="job-strip" aria-label="Common production jobs">
-          <div className="site-wrap">
-            {jobTypes.map((job) => <span key={job}>{job}</span>)}
+        <section className="home-product-register" aria-label="Common production products">
+          <div className="site-wrap home-product-register__grid">
+            {homepageProducts.map((product, index) => (
+              <a className="home-product-card" href={product.href} key={product.title}>
+                <img src={product.image} alt="" loading="lazy" decoding="async" />
+                <span className="home-product-card__scrim" aria-hidden="true" />
+                <span className="home-product-card__meta">
+                  <small>{String(index + 1).padStart(2, '0')} / {product.route}</small>
+                  <strong>{product.title}</strong>
+                </span>
+              </a>
+            ))}
           </div>
-        </div>
+        </section>
 
         <section id="services" className="section section--paper">
           <div className="site-wrap service-layout">
