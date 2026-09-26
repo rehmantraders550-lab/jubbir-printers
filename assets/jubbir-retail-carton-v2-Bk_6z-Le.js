@@ -1,0 +1,1 @@
+const b="/jubbir-printers/assets/jubbir-brochure-v2-Bh1XefLf.webp",r="/jubbir-printers/assets/jubbir-labels-v2-CIh9IOpK.webp",s="/jubbir-printers/assets/jubbir-retail-carton-v2-DIazwEtO.webp";export{b,s as c,r as l};
