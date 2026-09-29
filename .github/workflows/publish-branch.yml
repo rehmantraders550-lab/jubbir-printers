@@ -31,7 +31,7 @@ jobs:
         run: npm run lint
 
       - name: Build static site
-        run: npm run build -- --base=/jubbir-printers/
+        run: npm run build -- --base=/
 
       - name: Publish gh-pages branch
         shell: bash

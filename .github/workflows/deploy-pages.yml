@@ -35,7 +35,7 @@ jobs:
         run: npm run lint
 
       - name: Build for GitHub Pages
-        run: npm run build -- --base=/jubbir-printers/
+        run: npm run build -- --base=/
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
