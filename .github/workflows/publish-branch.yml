@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 jobs:
   publish:
@@ -49,3 +50,27 @@ jobs:
           git add -A
           git commit -m "Publish Jubbir Printers"
           git push --force origin gh-pages
+
+
+      - name: Refresh custom domain certificate and enforce HTTPS
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="repos/${GITHUB_REPOSITORY}/pages"
+
+          gh api --method PUT "$endpoint"             --header "X-GitHub-Api-Version: 2022-11-28"             -f cname=jubbirprinters.com >/dev/null
+
+          for attempt in {1..40}; do
+            certificate_state="$(gh api "$endpoint"               --header "X-GitHub-Api-Version: 2022-11-28"               --jq '.https_certificate.state // "unknown"')"
+            echo "Certificate state: ${certificate_state} (attempt ${attempt})"
+            if [[ "$certificate_state" == "approved" ]]; then
+              gh api --method PUT "$endpoint"                 --header "X-GitHub-Api-Version: 2022-11-28"                 -F https_enforced=true >/dev/null
+              exit 0
+            fi
+            sleep 30
+          done
+
+          echo "::error::GitHub did not approve the custom certificate within 20 minutes."
+          exit 1
