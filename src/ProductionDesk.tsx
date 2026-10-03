@@ -69,7 +69,13 @@ export default function ProductionDesk() {
   };
 
   return (
-    <div className="site-shell production-desk-home">
+    <div
+      className="site-shell production-desk-home"
+      data-orvia-system="ORVIA"
+      data-orvia-project="jubbir-printers"
+      data-orvia-governed="true"
+      data-orvia-release="1.5"
+    >
       <a className="skip-link" href="#main-content">Skip to content</a>
 
       <header className="site-header">
@@ -370,6 +376,19 @@ export default function ProductionDesk() {
           <div>
             <a className="footer-brand" href="#top">JUBBIR PRINTERS</a>
             <p>Commercial Print / Packaging / DTF Transfers / Custom Production</p>
+            <div className="footer-contact-list" role="group" aria-label="Production contacts">
+              <p className="micro-label">Production contacts</p>
+              <a className="footer-contact-link" href="tel:+923008886888" aria-label="Call Amjad Rubbani, owner, at 0300 888 6888">
+                <span className="footer-contact-role">Owner</span>
+                <strong>Amjad Rubbani</strong>
+                <span className="footer-contact-number">0300 888 6888</span>
+              </a>
+              <a className="footer-contact-link" href="tel:+923088999988" aria-label="Call Ali Hamza, workflow head, at 0308 899 9988">
+                <span className="footer-contact-role">Workflow Head</span>
+                <strong>Ali Hamza</strong>
+                <span className="footer-contact-number">0308 899 9988</span>
+              </a>
+            </div>
           </div>
           <nav aria-label="Footer navigation">
             <p className="micro-label">Production desk</p>
@@ -382,6 +401,7 @@ export default function ProductionDesk() {
         </div>
         <div className="site-wrap footer-bottom">
           <span>JUBBIR / PRODUCTION DESK</span>
+          <span className="footer-orvia">Powered by ORVIA</span>
           <span>PRINT WITH PURPOSE.</span>
         </div>
       </footer>
