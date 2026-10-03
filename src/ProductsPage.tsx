@@ -9,7 +9,7 @@ const families = [
   {
     number: '01',
     title: 'Commercial Print',
-    copy: 'Repeatable business print for everyday communication, presentation and sales materials.',
+    copy: 'Business cards, flyers, brochures, catalogues, menus, tags and repeat runs. Share the finished size, quantity, paper preference, print sides and any folding or binding needed.',
     items: ['Business cards', 'Flyers', 'Brochures', 'Catalogues', 'Menus', 'Presentation folders', 'Letterheads', 'Envelopes', 'Business stationery', 'Inserts', 'Promotional cards', 'Product tags'],
     image: brochureImage,
     alt: 'Finished commercial brochures beside print production equipment',
@@ -19,7 +19,7 @@ const families = [
   {
     number: '02',
     title: 'Packaging',
-    copy: 'Printed packaging outputs developed around artwork, stock, finishing and conversion requirements.',
+    copy: 'Cartons, sleeves, bakery packs, retail packs and labels are specified around the product dimensions, quantity, artwork or dieline, substrate and finishing requirements.',
     items: ['Product cartons', 'Folding boxes', 'Retail boxes', 'Bakery boxes', 'Food packaging', 'Packaging sleeves', 'Printed inserts', 'Product labels', 'Packaging labels', 'Hang tags', 'Bottle labels', 'Retail packs'],
     image: cartonImage,
     alt: 'Printed retail cartons shown as finished and flat production pieces',
@@ -29,7 +29,7 @@ const families = [
   {
     number: '03',
     title: 'DTF Transfers',
-    copy: 'Full-colour transfer output for apparel, uniforms, merchandise and gang-sheet production.',
+    copy: 'Full-colour transfers for apparel, uniforms and merchandise. Include the finished transfer size, quantity, garment or application and whether artwork is supplied as a gang sheet.',
     items: ['Logo transfers', 'Chest prints', 'Back prints', 'Uniform graphics', 'Merchandise transfers', 'Gang sheets', 'Custom transfer artwork'],
     image: dtfImage,
     alt: 'Full-colour DTF gang sheet emerging from a roll printer',
@@ -39,7 +39,7 @@ const families = [
   {
     number: '04',
     title: 'Custom Production',
-    copy: 'Specification-led work for jobs that do not fit a preset production path.',
+    copy: 'Custom formats, prototype runs, mixed materials, stickers and specialist print jobs. Describe the intended use and share the size, quantity, material preference and a reference if available.',
     items: ['Odd sizes', 'Prototype runs', 'Mixed materials', 'Special finishing', 'Bulk jobs', 'Custom formats', 'Custom-cut stickers', 'Brand stickers', 'QR / barcode labels', 'Promotional stickers', 'Counter cards', 'Product information cards'],
     image: labelsImage,
     alt: 'Custom printed labels being contour-cut on production equipment',

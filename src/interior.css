@@ -145,6 +145,10 @@
   line-height: 1.8;
 }
 
+.product-family__content > p:not(.micro-label) {
+  overflow-wrap: anywhere;
+}
+
 .product-item-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -1138,6 +1138,57 @@ img {
   letter-spacing: 0.18em;
 }
 
+.footer-contact-list {
+  display: grid;
+  max-width: 360px;
+  gap: 7px;
+  margin-top: 28px;
+}
+
+.footer-contact-list > .micro-label {
+  margin: 0 0 3px;
+  color: var(--muted-dark);
+}
+
+.footer-contact-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  align-items: baseline;
+  padding-block: 10px;
+  border-top: 1px solid rgb(255 255 255 / 14%);
+  font-size: 12px;
+}
+
+.footer-contact-link strong {
+  color: var(--white);
+  font-size: 13px;
+}
+
+.footer-contact-role {
+  grid-column: 1 / -1;
+  color: var(--accent);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.footer-contact-number {
+  color: var(--muted-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+.footer-contact-link:hover .footer-contact-number,
+.footer-contact-link:focus-visible .footer-contact-number {
+  color: var(--white);
+}
+
+.footer-orvia {
+  color: #b9b1a7;
+  letter-spacing: 0.12em;
+}
+
 .drawer-backdrop {
   position: fixed;
   z-index: 90;
@@ -1941,3 +1992,120 @@ img {
   }
 }
 
+/* Jubbir V1.5: reflow phone layouts so key information is visible without sideways scrolling. */
+@media (max-width: 620px) {
+  .production-desk-home .hero-title-line {
+    width: auto;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .production-desk-home .hero h1 {
+    font-size: clamp(38px, 12vw, 58px);
+  }
+
+  .production-desk-home .hero-title-line--long {
+    font-size: 0.92em;
+  }
+
+  .production-desk-home .desk-register {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+  }
+
+  .production-desk-home .desk-register ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    overflow: visible;
+  }
+
+  .production-desk-home .desk-register li {
+    min-width: 0;
+    min-height: 54px;
+    padding: 10px 9px;
+  }
+
+  .production-desk-home .home-product-register__grid {
+    display: grid;
+    width: min(1240px, calc(100% - 28px));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    overflow: visible;
+    margin-inline: auto;
+    padding-block: 14px;
+    scroll-snap-type: none;
+  }
+
+  .production-desk-home .home-product-card {
+    min-width: 0;
+    min-height: 140px;
+    scroll-snap-align: none;
+  }
+
+  .production-desk-home .home-product-card img {
+    min-height: 140px;
+  }
+}
+
+@media (max-width: 380px) {
+  .site-wrap {
+    width: min(1240px, calc(100% - 24px));
+  }
+
+  .header-inner {
+    gap: 6px;
+  }
+
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .brand-copy strong {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+
+  .header-actions {
+    gap: 5px;
+  }
+
+  .header-cta {
+    min-height: 38px;
+    padding: 8px 9px;
+    font-size: 10px;
+    line-height: 1.1;
+  }
+
+  .menu-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .production-desk-home .hero-copy {
+    padding-inline: 18px;
+  }
+
+  .production-desk-home .hero h1 {
+    font-size: clamp(34px, 11.5vw, 42px);
+  }
+
+  .production-desk-home .hero-title-line--long {
+    font-size: 0.9em;
+  }
+
+  .production-desk-home .home-product-card__meta {
+    right: 10px;
+    left: 10px;
+  }
+
+  .production-desk-home .home-product-card__meta strong {
+    font-size: 15px;
+  }
+}
