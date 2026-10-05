@@ -122,37 +122,47 @@ img {
   flex-shrink: 0;
 }
 
-.brand-mark {
-  display: grid;
-  width: 46px;
-  height: 46px;
-  place-items: center;
-  border-radius: 13px;
-  background: var(--ink);
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+}
+
+.brand-lockup--on-dark {
   color: var(--white);
+}
+
+.brand-lockup__mark {
+  display: block;
+  width: 39px;
+  height: 42px;
+  flex: 0 0 auto;
+}
+
+.brand-lockup__copy {
+  display: grid;
+  gap: 2px;
+  line-height: 1;
+}
+
+.brand-lockup__copy strong,
+.brand-lockup__copy small {
+  display: block;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+
+.brand-lockup__copy strong {
   font-size: 14px;
   font-weight: 950;
-  letter-spacing: -0.04em;
+  letter-spacing: 0.1em;
 }
 
-.brand-copy strong,
-.brand-copy small {
-  display: block;
-}
-
-.brand-copy strong {
-  font-size: 14px;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-}
-
-.brand-copy small {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+.brand-lockup__copy small {
+  font-size: 7px;
+  font-weight: 850;
+  letter-spacing: 0.42em;
 }
 
 .desktop-nav {
@@ -1090,9 +1100,17 @@ img {
 }
 
 .footer-brand {
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: 0.14em;
+  display: inline-flex;
+  align-items: center;
+}
+
+.footer-brand .brand-lockup__mark {
+  width: 37px;
+  height: 40px;
+}
+
+.footer-brand .brand-lockup__copy strong {
+  font-size: 15px;
 }
 
 .footer-grid > div:first-child > p,
@@ -1534,18 +1552,21 @@ img {
     gap: 10px;
   }
 
-  .brand-mark {
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
+  .brand-lockup {
+    gap: 7px;
   }
 
-  .brand-copy strong {
-    font-size: 11px;
+  .brand-lockup__mark {
+    width: 34px;
+    height: 37px;
   }
 
-  .brand-copy small {
-    display: none;
+  .brand-lockup__copy strong {
+    font-size: 12px;
+  }
+
+  .brand-lockup__copy small {
+    font-size: 6px;
   }
 
   .header-actions {
@@ -2062,14 +2083,18 @@ img {
     gap: 8px;
   }
 
-  .brand-mark {
-    width: 36px;
-    height: 36px;
+  .brand-lockup {
+    gap: 5px;
   }
 
-  .brand-copy strong {
+  .brand-lockup__mark {
+    width: 30px;
+    height: 33px;
+  }
+
+  .brand-lockup__copy strong {
     font-size: 10px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
   }
 
   .header-actions {
