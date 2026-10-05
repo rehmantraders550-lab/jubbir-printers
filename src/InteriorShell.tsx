@@ -2,6 +2,7 @@ import { ArrowRight, Menu, X } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useCallback, useState, type ReactNode } from 'react';
 import { JobDrawer } from './JobDrawer';
+import { BrandLogo } from './BrandLogo';
 
 const nav = [
   ['Home', './index.html'],
@@ -39,11 +40,7 @@ export function InteriorShell({ children, current }: InteriorShellProps) {
       <header className="site-header">
         <div className="site-wrap header-inner">
           <a className="brand" href="./index.html" aria-label="Jubbir Printers home">
-            <span className="brand-mark" aria-hidden="true">JP</span>
-            <span className="brand-copy">
-              <strong>JUBBIR PRINTERS</strong>
-              <small>Production Desk</small>
-            </span>
+            <BrandLogo />
           </a>
           <nav className="desktop-nav" aria-label="Primary navigation">
             {nav.map(([label, href]) => (
@@ -92,7 +89,9 @@ export function InteriorShell({ children, current }: InteriorShellProps) {
       <footer className="site-footer">
         <div className="site-wrap footer-grid">
           <div>
-            <a className="footer-brand" href="./index.html">JUBBIR PRINTERS</a>
+            <a className="footer-brand" href="./index.html" aria-label="Jubbir Printers home">
+              <BrandLogo onDark />
+            </a>
             <p>Commercial Print / Packaging / DTF Transfers / Custom Production</p>
             <div className="footer-contact-list" role="group" aria-label="Production contacts">
               <p className="micro-label">Production contacts</p>

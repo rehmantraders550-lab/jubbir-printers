@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, Check, ChevronRight, Menu, X } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 import { JobDrawer } from './JobDrawer';
 import {
   artworkChecks,
@@ -81,11 +82,7 @@ export default function ProductionDesk() {
       <header className="site-header">
         <div className="site-wrap header-inner">
           <a className="brand" href="#top" aria-label="Jubbir Printers home">
-            <span className="brand-mark" aria-hidden="true">JP</span>
-            <span className="brand-copy">
-              <strong>JUBBIR PRINTERS</strong>
-              <small>Production Desk</small>
-            </span>
+            <BrandLogo />
           </a>
 
           <nav className="desktop-nav" aria-label="Primary navigation">
@@ -374,7 +371,9 @@ export default function ProductionDesk() {
       <footer className="site-footer">
         <div className="site-wrap footer-grid">
           <div>
-            <a className="footer-brand" href="#top">JUBBIR PRINTERS</a>
+            <a className="footer-brand" href="#top" aria-label="Jubbir Printers home">
+              <BrandLogo onDark />
+            </a>
             <p>Commercial Print / Packaging / DTF Transfers / Custom Production</p>
             <div className="footer-contact-list" role="group" aria-label="Production contacts">
               <p className="micro-label">Production contacts</p>
