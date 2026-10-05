@@ -2134,3 +2134,106 @@ img {
     font-size: 15px;
   }
 }
+
+/* Jubbir logo prominence update: approximately 2× scale, with narrow-screen reflow. */
+.brand-lockup {
+  gap: 18px;
+}
+
+.brand-lockup__mark {
+  width: 78px;
+  height: 84px;
+}
+
+.brand-lockup__copy strong {
+  font-size: 28px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.brand-lockup__copy small {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.35em;
+}
+
+.footer-brand .brand-lockup__mark {
+  width: 74px;
+  height: 80px;
+}
+
+.footer-brand .brand-lockup__copy strong {
+  font-size: 30px;
+  font-weight: 950;
+}
+
+.footer-brand .brand-lockup__copy small {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+@media (max-width: 620px) {
+  .header-inner {
+    min-height: 96px;
+    gap: 10px;
+  }
+
+  .brand-lockup {
+    gap: 14px;
+  }
+
+  .brand-lockup__mark {
+    width: 68px;
+    height: 74px;
+  }
+
+  .brand-lockup__copy strong {
+    font-size: 24px;
+  }
+
+  .brand-lockup__copy small {
+    font-size: 12px;
+  }
+
+  .footer-brand .brand-lockup__mark {
+    width: 74px;
+    height: 80px;
+  }
+
+  .footer-brand .brand-lockup__copy strong {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 440px) {
+  .header-inner {
+    min-height: 0;
+    flex-wrap: wrap;
+    gap: 8px 6px;
+    padding-block: 10px;
+  }
+
+  .header-inner > .brand {
+    flex: 1 0 100%;
+  }
+
+  .header-actions {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .brand-lockup {
+    gap: 10px;
+  }
+
+  .brand-lockup__mark {
+    width: 60px;
+    height: 66px;
+  }
+
+  .brand-lockup__copy strong {
+    font-size: 20px;
+  }
+}
+
