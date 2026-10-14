@@ -42,9 +42,9 @@ test('small controls and light-surface labels have readable contrast', async ({ 
       return contrast(color.foreground, color.background);
     }).toBeGreaterThanOrEqual(4.5);
   }
-  for (const route of ['products', 'commercial-print', 'packaging', 'dtf-transfers', 'custom-production']) {
+  for (const route of ['products', 'commercial-print', 'packaging', 'dtf-transfers', 'custom-production', 'capabilities', 'work', 'artwork-guide', 'process', 'start-a-job']) {
     await page.goto(`/${route}.html`);
-    const labels = await page.locator('.interior-hero .eyebrow, .interior-section .eyebrow, .product-item-grid small, .service-jobs-section .eyebrow, .service-job-register article > span, .service-considerations .eyebrow, .service-proof-section .eyebrow, .service-artwork-section .eyebrow, .service-artwork-register article > span, .service-route-links .eyebrow, .route-link-grid a:not([aria-current="page"]) > span').evaluateAll(elements => elements.map(element => {
+    const labels = await page.locator('.interior-hero .eyebrow, .interior-section .eyebrow, .product-item-grid small, .service-jobs-section .eyebrow, .service-job-register article > span, .service-considerations .eyebrow, .service-proof-section .eyebrow, .service-artwork-section .eyebrow, .service-artwork-register article > span, .service-route-links .eyebrow, .route-link-grid a:not([aria-current="page"]) > span, .preflight-section .eyebrow, .technical-register span, .preflight-list article > span, .archive-register .eyebrow, .archive-register__link > span, .artwork-guide-intro .eyebrow, .artwork-guide-register article > span, .trim-diagram-section .eyebrow, .trim-diagram__bleed > span, .artwork-file-note .eyebrow, .full-process-number, .process-route-note .eyebrow, .job-prep-section .eyebrow, .job-prep-grid small, .job-field-register-section .eyebrow, .job-field-register span, .local-brief .eyebrow--dark, .final-cta .eyebrow--dark').evaluateAll(elements => elements.map(element => {
       let surface: Element | null = element;
       while (surface && getComputedStyle(surface).backgroundColor === 'rgba(0, 0, 0, 0)') surface = surface.parentElement;
       return { text: element.textContent, foreground: getComputedStyle(element).color, background: getComputedStyle(surface || document.body).backgroundColor };

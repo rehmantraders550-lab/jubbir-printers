@@ -72,7 +72,7 @@ export default function CapabilitiesPage() {
             {capabilitySections.map(({ number, title, meta, copy, details, image, alt, icon: Icon }, index) => (
               <article className="capability-deep" key={title}>
                 <div className="capability-deep__media">
-                  <img src={image} alt={alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+                  <img src={image} alt={alt} width={1536} height={1024} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
                 </div>
                 <div className="capability-deep__body">
                   <div className="capability-deep__head">

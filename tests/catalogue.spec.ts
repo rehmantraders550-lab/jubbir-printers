@@ -11,7 +11,7 @@ test('page intake buttons open the shared drawer without losing the current page
   await page.emulateMedia({ reducedMotion: 'reduce' });
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
-    for (const route of ['products', 'start-a-job', ...servicePages.map(([path]) => path)]) {
+    for (const route of ['products', 'start-a-job', 'work', 'artwork-guide', 'process', ...servicePages.map(([path]) => path)]) {
       await page.goto(`/${route}.html`);
       const opener = page.locator('main').getByRole('button', { name: 'Start a Job', exact: true });
       await opener.scrollIntoViewIfNeeded();

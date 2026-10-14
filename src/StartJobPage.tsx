@@ -14,6 +14,7 @@ export default function StartJobPage() {
           </div>
           <div>
             <p>This page helps prepare the information Jubbir needs before quotation. Use the Start a Job drawer to review your brief and open it in WhatsApp for {JOB_RECIPIENT.name} at {JOB_RECIPIENT.displayPhone}.</p>
+            <p>Your name, phone number, job and quantity are required. The other details can be confirmed during review.</p>
             <p className="submission-note">Attach artwork in WhatsApp and tap Send to deliver your request.</p>
           </div>
         </div>
@@ -41,9 +42,9 @@ export default function StartJobPage() {
 
       <section className="section job-field-register-section">
         <div className="site-wrap job-field-register-grid">
-          <div><p className="eyebrow">Job brief structure</p><h2>The intake asks for nine essentials.</h2></div>
+          <div><p className="eyebrow">Job brief structure</p><h2>The details the desk needs.</h2></div>
           <div className="job-field-register">
-            {['Your name','Business name','Phone / WhatsApp','What are you printing?','Finished size','Quantity','Material preference','Finishing requirement','Additional notes + artwork reference'].map((field,index)=>(
+            {['Your name','Business name','Phone / WhatsApp','What are you printing?','Finished size','Quantity','Material preference','Finishing requirement','Additional notes','Artwork or reference file (optional)'].map((field,index)=>(
               <div key={field}><span>{String(index+1).padStart(2,'0')}</span><strong>{field}</strong></div>
             ))}
           </div>

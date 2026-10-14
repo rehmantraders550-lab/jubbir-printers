@@ -5,6 +5,7 @@ import { artworkChecks } from './data';
 export default function ArtworkGuidePage() {
   return (
     <InteriorShell current="Artwork">
+      {(openJobDrawer) => <>
       <section className="interior-hero">
         <div className="site-wrap interior-hero__grid">
           <div>
@@ -77,6 +78,7 @@ export default function ArtworkGuidePage() {
           <div>
             <p>Where applicable, prepare artwork in CMYK, at final size, with suitable image resolution and embedded or outlined fonts.</p>
             <p>These are preparation guidelines, not a guarantee that every file is ready without review.</p>
+            <p>Attach the artwork in WhatsApp when you send your job brief. Selecting a file on this website keeps a reference on your device.</p>
           </div>
         </div>
       </section>
@@ -84,9 +86,10 @@ export default function ArtworkGuidePage() {
       <section className="final-cta-section">
         <div className="site-wrap final-cta">
           <div><p className="eyebrow eyebrow--dark">Next step</p><h2>File checked? Prepare the job.</h2><p>Bring the artwork together with size, quantity, material and finishing requirements.</p></div>
-          <a className="button button--ink" href="./start-a-job.html">Start job preparation</a>
+          <button type="button" className="button button--ink" onClick={openJobDrawer}>Start a Job</button>
         </div>
       </section>
+      </>}
     </InteriorShell>
   );
 }
