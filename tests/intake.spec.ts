@@ -32,6 +32,8 @@ test('small controls and light-surface labels have readable contrast', async ({ 
   for (const hover of [false, true]) {
     if (hover) await cta.hover();
     // Wait for the existing color transition to reach its final state.
+    await expect.poll(() => cta.evaluate(element => getComputedStyle(element).backgroundColor))
+      .toBe(hover ? 'rgb(202, 79, 23)' : 'rgb(243, 107, 43)');
     await expect.poll(async () => {
       const color = await cta.evaluate(element => {
         const style = getComputedStyle(element);
@@ -121,6 +123,7 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('response', response => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   for (const width of [320, 390, 620, 768, 1024, 1440]) {
     await test.step(`${width}px`, async () => {
@@ -132,7 +135,11 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
         return {
           scrollWidth: document.documentElement.scrollWidth, width: document.documentElement.clientWidth,
           copy: box('.hero-copy'), visual: box('.hero-visual'),
-          lines: [...document.querySelectorAll('.hero-title-line')].map(el => el.getBoundingClientRect().toJSON()),
+          lines: [...document.querySelectorAll('.hero-title-line')].flatMap(el => {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            return [...range.getClientRects()].map(rect => rect.toJSON());
+          }),
           offset: parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop),
           header: box('.site-header'), cta: box('.header-cta'),
         };
@@ -147,6 +154,12 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
       if (width <= 860) expect(layout.visual.y).toBeGreaterThanOrEqual(layout.copy.bottom - 1);
       else expect(layout.visual.y).toBe(layout.copy.y);
       await expect(page.locator('.desk-register li')).toHaveCount(5);
+      // Bring lazy images into view before recording or judging the full page.
+      for (const img of await page.locator('img').all()) {
+        await img.scrollIntoViewIfNeeded();
+        await expect.poll(() => img.evaluate(element => (element as HTMLImageElement).complete && (element as HTMLImageElement).naturalWidth > 0)).toBe(true);
+      }
+      await page.locator('.brand').click();
       await page.screenshot({ path: testInfo.outputPath(`home-${width}.png`), fullPage: true });
       if (width <= 860) {
         const menu = page.getByRole('button', { name: 'Open navigation menu' });
@@ -157,13 +170,14 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
       } else {
         await page.locator('.desktop-nav').getByRole('link', { name: 'Services' }).click();
       }
-      await expect.poll(async () => (await page.locator('#services').boundingBox())!.y).toBeGreaterThanOrEqual(layout.header.height);
+      await expect.poll(async () => Math.abs((await page.locator('#services').boundingBox())!.y - (layout.header.height + 8))).toBeLessThanOrEqual(2);
       const commercial = page.getByRole('tab', { name: /Commercial Print/ });
       await commercial.focus();
       await commercial.press('ArrowDown');
       await expect(page.getByRole('tab', { name: /Packaging/ })).toHaveAttribute('aria-selected', 'true');
       await expect(page.getByRole('heading', { name: 'Packaging prepared for real products.' })).toBeVisible();
       await page.locator('.header-cta').click();
+      await page.screenshot({ path: testInfo.outputPath(`drawer-${width}-top.png`) });
       await fillRequired(page);
       await page.getByRole('button', { name: 'Prepare job brief' }).click();
       await page.getByRole('link', { name: 'Continue in WhatsApp' }).scrollIntoViewIfNeeded();
@@ -184,6 +198,16 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
     });
   }
   expect(errors).toEqual([]);
+});
+
+test('mobile menu anchors settle below the header with normal motion', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto('/');
+  const headerHeight = (await page.locator('.site-header').boundingBox())!.height;
+  await page.getByRole('button', { name: 'Open navigation menu' }).click();
+  await page.locator('.mobile-nav').getByRole('link', { name: 'Services' }).click();
+  await expect(page.locator('.mobile-nav')).toHaveCount(0);
+  await expect.poll(async () => Math.abs((await page.locator('#services').boundingBox())!.y - (headerHeight + 8))).toBeLessThanOrEqual(2);
 });
 
 test('shared drawer and page assets work on every interior route', async ({ page }) => {

@@ -37,7 +37,8 @@ export function JobDrawer({ open, onClose }: JobDrawerProps) {
     name,
     value: draft[name],
     onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setDraft((current) => ({ ...current, [name]: event.target.value }));
+      const value = event.currentTarget.value;
+      setDraft((current) => ({ ...current, [name]: value }));
       invalidateCopy();
     },
     'aria-invalid': attempted && !!errors[name] ? true : undefined,

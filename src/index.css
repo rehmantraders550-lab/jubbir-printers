@@ -1252,7 +1252,7 @@ img {
   line-height: 1;
 }
 
-.drawer-head > div > p:last-child {
+.drawer-head > div > p:not(.eyebrow) {
   max-width: 450px;
   margin: 16px 0 0;
   color: var(--muted);
