@@ -4,6 +4,7 @@ import brochureImage from './assets/images/jubbir-brochure-v2.webp';
 import dtfImage from './assets/images/jubbir-dtf-transfer-v2.webp';
 import labelsImage from './assets/images/jubbir-labels-v2.webp';
 import cartonImage from './assets/images/jubbir-retail-carton-v2.webp';
+import customImage from './assets/images/jubbir-custom-jobs-v1.webp';
 
 const families = [
   {
@@ -41,8 +42,8 @@ const families = [
     title: 'Custom Production',
     copy: 'Custom formats, prototype runs, mixed materials, stickers and specialist print jobs. Describe the intended use and share the size, quantity, material preference and a reference if available.',
     items: ['Odd sizes', 'Prototype runs', 'Mixed materials', 'Special finishing', 'Bulk jobs', 'Custom formats', 'Custom-cut stickers', 'Brand stickers', 'QR / barcode labels', 'Promotional stickers', 'Counter cards', 'Product information cards'],
-    image: labelsImage,
-    alt: 'Custom printed labels being contour-cut on production equipment',
+    image: customImage,
+    alt: 'Printed sleeve, die-cut tag and angular card samples on a finishing bench',
     icon: Box,
     href: './custom-production.html',
   },
@@ -51,10 +52,11 @@ const families = [
 export default function ProductsPage() {
   return (
     <InteriorShell current="Products">
+      {(openJobDrawer) => <>
       <section className="interior-hero interior-hero--products">
         <div className="site-wrap interior-hero__grid">
           <div>
-            <p className="eyebrow">Product register / Wave 01</p>
+            <p className="eyebrow">Product register</p>
             <h1>Printed output, organised by production route.</h1>
           </div>
           <div className="interior-hero__aside">
@@ -81,7 +83,7 @@ export default function ProductsPage() {
             {families.map(({ number, title, copy, items, image, alt, icon: Icon, href }, index) => (
               <article className="product-family" key={title}>
                 <div className="product-family__visual">
-                  <img src={image} alt={alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+                  <img src={image} alt={alt} width={1200} height={800} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
                   <span className="product-family__number">{number}</span>
                 </div>
                 <div className="product-family__content">
@@ -103,6 +105,7 @@ export default function ProductsPage() {
               </article>
             ))}
           </div>
+          <p className="product-imagery-note">Illustrative product examples. Specifications are confirmed with the desk.</p>
         </div>
       </section>
 
@@ -158,9 +161,10 @@ export default function ProductsPage() {
             <h2>Know the product? Define the job.</h2>
             <p>Use the Production Desk intake to prepare the specification before quotation.</p>
           </div>
-          <a className="button button--ink" href="./index.html#top">Start from the Production Desk <ArrowRight aria-hidden="true" /></a>
+          <button type="button" className="button button--ink" onClick={openJobDrawer}>Start a Job <ArrowRight aria-hidden="true" /></button>
         </div>
       </section>
+      </>}
     </InteriorShell>
   );
 }

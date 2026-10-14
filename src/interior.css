@@ -11,6 +11,11 @@
   background: var(--paper);
 }
 
+.interior-hero .eyebrow,
+.interior-section .eyebrow {
+  color: var(--ink);
+}
+
 .interior-hero__grid {
   display: grid;
   min-height: 560px;
@@ -156,6 +161,13 @@
   border-top: 1px solid rgb(23 23 23 / 15%);
 }
 
+.product-imagery-note {
+  margin: 22px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .product-item-grid span {
   display: flex;
   min-height: 54px;
@@ -176,8 +188,8 @@
 }
 
 .product-item-grid small {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 11px;
   letter-spacing: 0.12em;
 }
 

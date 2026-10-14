@@ -54,7 +54,7 @@ export default function CapabilitiesPage() {
       <section className="interior-hero interior-hero--capabilities">
         <div className="site-wrap interior-hero__grid">
           <div>
-            <p className="eyebrow">Capability register / Wave 01</p>
+            <p className="eyebrow">Capability register</p>
             <h1>Production decisions made visible.</h1>
           </div>
           <div className="interior-hero__aside">
