@@ -8,7 +8,7 @@ export default function ArtworkGuidePage() {
       <section className="interior-hero">
         <div className="site-wrap interior-hero__grid">
           <div>
-            <p className="eyebrow">Artwork guide / Wave 03</p>
+            <p className="eyebrow">Artwork guide</p>
             <h1>Prepare the file before production.</h1>
           </div>
           <div className="interior-hero__aside">

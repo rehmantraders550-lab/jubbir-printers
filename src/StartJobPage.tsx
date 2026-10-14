@@ -5,10 +5,11 @@ import { JOB_RECIPIENT } from './jobBrief';
 export default function StartJobPage() {
   return (
     <InteriorShell current="Start a Job">
+      {(openJobDrawer) => <>
       <section className="start-job-hero">
         <div className="site-wrap start-job-hero__grid">
           <div>
-            <p className="eyebrow">Start a job / Wave 03</p>
+            <p className="eyebrow">Start a job</p>
             <h1>Bring the essentials. Build the brief.</h1>
           </div>
           <div>
@@ -67,11 +68,12 @@ export default function StartJobPage() {
           <div>
             <p className="eyebrow">Production Desk intake</p>
             <h2>Ready? Start a Job.</h2>
-            <p>The header button opens the same intake from anywhere on this page.</p>
+            <p>Open the intake, review your specification and continue in WhatsApp.</p>
           </div>
-          <a className="button button--accent" href="./index.html#top">Open from Production Desk <ArrowRight aria-hidden="true" /></a>
+          <button type="button" className="button button--accent" onClick={openJobDrawer}>Start a Job <ArrowRight aria-hidden="true" /></button>
         </div>
       </section>
+      </>}
     </InteriorShell>
   );
 }

@@ -6,6 +6,10 @@ import brochureImage from './assets/images/jubbir-brochure-v2.webp';
 import dtfImage from './assets/images/jubbir-dtf-transfer-v2.webp';
 import labelsImage from './assets/images/jubbir-labels-v2.webp';
 import cartonImage from './assets/images/jubbir-retail-carton-v2.webp';
+import businessCardsImage from './assets/images/jubbir-business-cards-v1.webp';
+import stationeryImage from './assets/images/jubbir-stationery-v1.webp';
+import bulkImage from './assets/images/jubbir-bulk-printing-v1.webp';
+import customImage from './assets/images/jubbir-custom-jobs-v1.webp';
 
 export type ServicePageKey = 'commercial' | 'packaging' | 'dtf' | 'custom';
 
@@ -16,7 +20,7 @@ type ServicePageConfig = {
   title: string;
   description: string;
   process: string;
-  applications: string[];
+  applications: Array<{ title: string; copy: string }>;
   hero: string;
   heroAlt: string;
   gallery: Array<{ image: string; alt: string; label: string; meta: string }>;
@@ -32,13 +36,20 @@ const configs: Record<ServicePageKey, ServicePageConfig> = {
     title: 'Commercial print that stays consistent.',
     description: 'Business stationery, flyers, brochures, catalogues, menus, tags and repeat print runs managed with a production-first approach.',
     process: 'Offset / short-run production',
-    applications: ['Business cards', 'Flyers', 'Brochures', 'Menus', 'Tags', 'Stationery'],
+    applications: [
+      { title: 'Business cards', copy: 'Share finished size, print sides, quantity and any stock or finishing preference.' },
+      { title: 'Flyers', copy: 'Confirm finished size, one or two print sides, quantity and paper preference.' },
+      { title: 'Brochures', copy: 'Include flat and folded sizes, panel layout, quantity and paper preference.' },
+      { title: 'Menus', copy: 'Share format, page count, quantity and whether folding or binding is needed.' },
+      { title: 'Tags', copy: 'Include finished shape, hole position if needed, quantity and card-stock preference.' },
+      { title: 'Stationery', copy: 'List letterheads, envelopes or other items, with size, quantity and print sides for each.' },
+    ],
     hero: brochureImage,
     heroAlt: 'Finished commercial brochures beside print production equipment',
     gallery: [
+      { image: businessCardsImage, alt: 'Stacks and individual printed business cards on a finishing bench', label: 'Business cards', meta: 'Card stock / print sides / finishing' },
+      { image: stationeryImage, alt: 'Printed letterhead and envelope stationery set', label: 'Stationery', meta: 'Letterheads / envelopes / coordinated print' },
       { image: brochureImage, alt: 'Finished commercial brochure production', label: 'Brochures', meta: 'Offset / coated paper / folded' },
-      { image: heroImage, alt: 'Commercial press producing printed sheets', label: 'Print route', meta: 'Offset / short-run production' },
-      { image: labelsImage, alt: 'Printed labels during cutting', label: 'Finishing', meta: 'Cutting / finished output' },
     ],
     route: ['Specify', 'Artwork review', 'Stock selection', 'Print route', 'Finishing', 'Collect / Dispatch'],
     considerations: [
@@ -55,7 +66,14 @@ const configs: Record<ServicePageKey, ServicePageConfig> = {
     title: 'Packaging prepared for real products.',
     description: 'Printed cartons, sleeves, labels and retail packaging developed around artwork, stock, finishing and the physical requirements of the job.',
     process: 'Print / finish / convert',
-    applications: ['Product cartons', 'Sleeves', 'Labels', 'Hang tags', 'Bakery packs', 'Retail packs'],
+    applications: [
+      { title: 'Product cartons', copy: 'Share product and carton dimensions, quantity, board preference and any existing dieline.' },
+      { title: 'Sleeves', copy: 'Include the size of the item to be wrapped, sleeve format, quantity and artwork or dieline.' },
+      { title: 'Labels', copy: 'Confirm label dimensions, shape, application surface, quantity and cut requirements.' },
+      { title: 'Hang tags', copy: 'Share size, shape, card-stock preference, hole position and quantity.' },
+      { title: 'Bakery packs', copy: 'Describe the intended contents, pack dimensions, quantity and packaging format.' },
+      { title: 'Retail packs', copy: 'Include product dimensions, pack format, quantity, artwork and finishing requirements.' },
+    ],
     hero: cartonImage,
     heroAlt: 'Printed retail cartons shown as finished and flat production pieces',
     gallery: [
@@ -78,13 +96,18 @@ const configs: Record<ServicePageKey, ServicePageConfig> = {
     title: 'Sharp, repeatable transfer production.',
     description: 'Full-colour DTF transfers for apparel, uniforms, merchandise and branded textile applications, including short runs and gang-sheet production.',
     process: 'DTF transfer production',
-    applications: ['Logos', 'Chest prints', 'Back prints', 'Uniform graphics', 'Merchandise', 'Gang sheets'],
+    applications: [
+      { title: 'Logos', copy: 'Supply final transfer size, number of copies and the intended garment or application.' },
+      { title: 'Chest prints', copy: 'Confirm graphic dimensions, placement, quantity and the supplied artwork.' },
+      { title: 'Back prints', copy: 'Share finished graphic size, quantity and artwork at the intended size.' },
+      { title: 'Uniform graphics', copy: 'List logo placements, transfer sizes and quantities for each design.' },
+      { title: 'Merchandise', copy: 'Describe the apparel application, graphic size, design count and quantity.' },
+      { title: 'Gang sheets', copy: 'Share artwork at final sizes and the copies needed for each design. The desk confirms the sheet layout before production.' },
+    ],
     hero: dtfImage,
     heroAlt: 'Full-colour DTF gang sheet emerging from a roll printer',
     gallery: [
       { image: dtfImage, alt: 'Full-colour DTF gang-sheet production', label: 'Gang sheets', meta: 'Full colour / transfer production' },
-      { image: heroImage, alt: 'Production equipment detail', label: 'Production desk', meta: 'Specification-led routing' },
-      { image: brochureImage, alt: 'Printed colour reference detail', label: 'Artwork', meta: 'File review / final-size output' },
     ],
     route: ['Specify', 'Artwork', 'Size + quantity', 'Gang-sheet planning', 'DTF production', 'Collect / Dispatch'],
     considerations: [
@@ -101,13 +124,20 @@ const configs: Record<ServicePageKey, ServicePageConfig> = {
     title: 'For work that does not fit a preset.',
     description: 'Unusual dimensions, mixed requirements, prototypes, custom finishing and production jobs that need a more direct conversation before quoting.',
     process: 'Specification-led production',
-    applications: ['Odd sizes', 'Prototype runs', 'Mixed materials', 'Special finishing', 'Bulk jobs', 'Custom formats'],
-    hero: labelsImage,
-    heroAlt: 'Custom printed labels being contour-cut on production equipment',
+    applications: [
+      { title: 'Odd sizes', copy: 'Provide finished width, height and shape, quantity and intended use.' },
+      { title: 'Prototype runs', copy: 'Describe the finished format, material preference, purpose of the prototype and any reference files.' },
+      { title: 'Mixed materials', copy: 'List each material and printed part, with dimensions, quantities and the intended assembly.' },
+      { title: 'Special finishing', copy: 'State the finish required and where it belongs, along with artwork, size and quantity.' },
+      { title: 'Bulk jobs', copy: 'Confirm total quantity, number of designs, finished size, print sides and material preferences.' },
+      { title: 'Custom formats', copy: 'Share a reference or drawing, finished dimensions, quantity and intended function.' },
+    ],
+    hero: customImage,
+    heroAlt: 'Printed sleeve, die-cut tag and angular card samples on a finishing bench',
     gallery: [
-      { image: labelsImage, alt: 'Custom-cut printed labels in production', label: 'Custom format', meta: 'Printed output / custom cut' },
-      { image: cartonImage, alt: 'Flat and assembled printed cartons', label: 'Prototype route', meta: 'Print / finish / convert' },
-      { image: brochureImage, alt: 'Finished brochure and print production detail', label: 'Mixed requirements', meta: 'Specification-led production' },
+      { image: customImage, alt: 'Printed sleeve and varied die-cut paper and card samples', label: 'Custom formats', meta: 'Printed output / varied shapes' },
+      { image: bulkImage, alt: 'Organised stacks of repeated printed leaflets', label: 'Bulk jobs', meta: 'Repeat printing / size / quantity' },
+      { image: labelsImage, alt: 'Custom-cut printed labels in production', label: 'Custom cutting', meta: 'Printed output / custom cut' },
     ],
     route: ['Specify', 'Reference files', 'Review', 'Production route', 'Quote + approve', 'Produce'],
     considerations: [
@@ -131,9 +161,10 @@ export default function ServiceDetailPage({ service }: { service: ServicePageKey
 
   return (
     <InteriorShell>
+      {(openJobDrawer) => <>
       <section className="service-detail-hero">
         <div className="service-detail-hero__media">
-          <img src={config.hero} alt={config.heroAlt} fetchPriority="high" decoding="async" />
+          <img src={config.hero} alt={config.heroAlt} width={1200} height={800} fetchPriority="high" decoding="async" />
           <div className="service-detail-hero__scrim" aria-hidden="true" />
         </div>
         <div className="site-wrap service-detail-hero__content">
@@ -161,10 +192,11 @@ export default function ServiceDetailPage({ service }: { service: ServicePageKey
             <p>These are common outputs, not fixed packages. Size, quantity, material, finishing and artwork still determine the final production route.</p>
           </div>
           <div className="service-job-register">
-            {config.applications.map((item, index) => (
-              <article key={item}>
+            {config.applications.map(({ title, copy }, index) => (
+              <article key={title}>
                 <span>{String(index + 1).padStart(2, '0')}</span>
-                <h3>{item}</h3>
+                <h3>{title}</h3>
+                <p>{copy}</p>
                 <Check aria-hidden="true" />
               </article>
             ))}
@@ -221,15 +253,15 @@ export default function ServiceDetailPage({ service }: { service: ServicePageKey
         <div className="site-wrap">
           <div className="section-head">
             <div>
-              <p className="eyebrow">Production evidence</p>
+              <p className="eyebrow">Production examples</p>
               <h2>Output, process and material.</h2>
             </div>
-            <p>Verified Jubbir production imagery is used as evidence rather than generic lifestyle photography.</p>
+            <p>Illustrative examples of output on this route. Final specifications are confirmed with the desk.</p>
           </div>
-          <div className="service-proof-grid">
+          <div className={config.gallery.length === 1 ? 'service-proof-grid service-proof-grid--single' : 'service-proof-grid'}>
             {config.gallery.map(({ image, alt, label, meta }, index) => (
-              <figure className={index === 0 ? 'service-proof-grid__feature' : ''} key={label}>
-                <img src={image} alt={alt} loading="lazy" decoding="async" />
+              <figure className={index === 0 && config.gallery.length > 1 ? 'service-proof-grid__feature' : ''} key={label}>
+                <img src={image} alt={alt} width={1200} height={800} loading="lazy" decoding="async" />
                 <figcaption><span>{label}</span><strong>{meta}</strong></figcaption>
               </figure>
             ))}
@@ -283,9 +315,10 @@ export default function ServiceDetailPage({ service }: { service: ServicePageKey
             <h2>Ready to define the specification?</h2>
             <p>Use the Production Desk intake to prepare the essentials before quotation.</p>
           </div>
-          <a className="button button--ink" href="./index.html#top">Start from the Production Desk <ArrowRight aria-hidden="true" /></a>
+          <button type="button" className="button button--ink" onClick={openJobDrawer}>Start a Job <ArrowRight aria-hidden="true" /></button>
         </div>
       </section>
+      </>}
     </InteriorShell>
   );
 }

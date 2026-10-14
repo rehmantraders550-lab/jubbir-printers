@@ -9,7 +9,7 @@ export default function ProcessPage() {
       <section className="process-hero">
         <div className="process-hero__media"><img src={heroImage} alt="Commercial print production in progress" fetchPriority="high" decoding="async" /><div aria-hidden="true" /></div>
         <div className="site-wrap process-hero__content">
-          <p className="eyebrow">How a job moves through Jubbir / Wave 03</p>
+          <p className="eyebrow">How a job moves through Jubbir</p>
           <h1>Clear stages. Fewer surprises.</h1>
           <a className="button button--outline" href="#full-process">Follow the route <ArrowDown aria-hidden="true" /></a>
         </div>

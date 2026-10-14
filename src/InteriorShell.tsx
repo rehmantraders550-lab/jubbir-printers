@@ -15,7 +15,7 @@ const nav = [
 ] as const;
 
 type InteriorShellProps = {
-  children: ReactNode;
+  children: ReactNode | ((openJobDrawer: () => void) => ReactNode);
   current?: 'Products' | 'Capabilities' | 'Work' | 'Artwork' | 'Process' | 'Start a Job';
 };
 
@@ -89,7 +89,7 @@ export function InteriorShell({ children, current }: InteriorShellProps) {
           )}
         </AnimatePresence>
       </header>
-      <main id="main-content">{children}</main>
+      <main id="main-content">{typeof children === 'function' ? children(openDrawer) : children}</main>
       <footer className="site-footer">
         <div className="site-wrap footer-grid">
           <div>

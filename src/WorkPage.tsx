@@ -21,7 +21,7 @@ export default function WorkPage() {
       <section className="interior-hero">
         <div className="site-wrap interior-hero__grid">
           <div>
-            <p className="eyebrow">Selected production / Wave 03</p>
+            <p className="eyebrow">Selected production</p>
             <h1>Work, not decoration.</h1>
           </div>
           <div className="interior-hero__aside">
