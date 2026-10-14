@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, Check, Clipboard, FileUp, X } from 'lucide-react';
+import { EMPTY_JOB_DRAFT, JOB_RECIPIENT, formatJobBrief, getWhatsAppUrl, validateJobDraft, type JobDraft } from './jobBrief';
 
 type JobDrawerProps = {
   open: boolean;
@@ -11,17 +12,42 @@ type CopyState = 'idle' | 'copied' | 'error';
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
-const getValue = (data: FormData, key: string) => String(data.get(key) ?? '').trim();
-
 export function JobDrawer({ open, onClose }: JobDrawerProps) {
   const drawerRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState('');
-  const [brief, setBrief] = useState('');
+  const [draft, setDraft] = useState<JobDraft>(EMPTY_JOB_DRAFT);
+  const [prepared, setPrepared] = useState(false);
+  const [attempted, setAttempted] = useState(false);
   const [copyState, setCopyState] = useState<CopyState>('idle');
+  const copyRequestRef = useRef(0);
   const reduceMotion = useReducedMotion();
+  const errors = validateJobDraft(draft);
+  const valid = Object.keys(errors).length === 0;
+  const brief = prepared && valid ? formatJobBrief(draft, selectedFile?.name) : '';
+
+  const invalidateCopy = () => {
+    copyRequestRef.current += 1;
+    setCopyState('idle');
+  };
+
+  const fieldProps = (name: keyof JobDraft) => ({
+    name,
+    value: draft[name],
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = event.currentTarget.value;
+      setDraft((current) => ({ ...current, [name]: value }));
+      invalidateCopy();
+    },
+    'aria-invalid': attempted && !!errors[name] ? true : undefined,
+    'aria-describedby': attempted && errors[name] ? `job-error-${name}` : undefined,
+  });
+
+  const fieldError = (name: keyof JobDraft) => attempted && errors[name] ? (
+    <span className="field-error" id={`job-error-${name}`}>{errors[name]}</span>
+  ) : null;
 
   useEffect(() => {
     if (!open) return;
@@ -29,7 +55,7 @@ export function JobDrawer({ open, onClose }: JobDrawerProps) {
     previousFocusRef.current = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    window.setTimeout(() => closeButtonRef.current?.focus(), 0);
+    const focusTimer = window.setTimeout(() => closeButtonRef.current?.focus(), 0);
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -61,6 +87,7 @@ export function JobDrawer({ open, onClose }: JobDrawerProps) {
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      window.clearTimeout(focusTimer);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
       previousFocusRef.current?.focus();
@@ -70,11 +97,18 @@ export function JobDrawer({ open, onClose }: JobDrawerProps) {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
     setFileError('');
-    setBrief('');
-    setCopyState('idle');
+    invalidateCopy();
+
+    // Cancelling the chooser must not discard a previously selected reference.
+    if (!file) return;
+
+    if (!/\.(pdf|ai|psd|jpe?g|png)$/i.test(file.name)) {
+      event.target.value = '';
+      setFileError('Choose a PDF, AI, PSD, JPG or PNG file.');
+      return;
+    }
 
     if (file && file.size > MAX_FILE_SIZE) {
-      setSelectedFile(null);
       event.target.value = '';
       setFileError('The selected file is larger than 20 MB. Choose a smaller file.');
       return;
@@ -85,34 +119,26 @@ export function JobDrawer({ open, onClose }: JobDrawerProps) {
 
   const prepareBrief = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const lines = [
-      'JUBBIR PRINTERS — JOB BRIEF',
-      '',
-      `Name: ${getValue(data, 'name')}`,
-      `Business: ${getValue(data, 'business') || 'Not provided'}`,
-      `Phone / WhatsApp: ${getValue(data, 'phone')}`,
-      `Job: ${getValue(data, 'job')}`,
-      `Finished size: ${getValue(data, 'size') || 'To be confirmed'}`,
-      `Quantity: ${getValue(data, 'quantity')}`,
-      `Material preference: ${getValue(data, 'material') || 'Advice required'}`,
-      `Finishing requirement: ${getValue(data, 'finishing') || 'Advice required'}`,
-      `Artwork: ${selectedFile?.name ?? 'Not selected'}`,
-      `Notes: ${getValue(data, 'notes') || 'None'}`,
-    ];
-
-    setBrief(lines.join('\n'));
-    setCopyState('idle');
+    setAttempted(true);
+    invalidateCopy();
+    if (!valid) {
+      const firstInvalid = Object.keys(errors)[0];
+      const control = event.currentTarget.elements.namedItem(firstInvalid);
+      if (control instanceof HTMLElement) control.focus();
+      return;
+    }
+    setPrepared(true);
   };
 
   const copyBrief = async () => {
     if (!brief) return;
+    const request = ++copyRequestRef.current;
 
     try {
       await navigator.clipboard.writeText(brief);
-      setCopyState('copied');
+      if (copyRequestRef.current === request) setCopyState('copied');
     } catch {
-      setCopyState('error');
+      if (copyRequestRef.current === request) setCopyState('error');
     }
   };
 
@@ -148,71 +174,77 @@ export function JobDrawer({ open, onClose }: JobDrawerProps) {
                 <p>
                   Give us the essentials. The production team can review the job before quotation.
                 </p>
+                <p className="drawer-routing">Your brief opens in WhatsApp for {JOB_RECIPIENT.name} at {JOB_RECIPIENT.displayPhone}.</p>
               </div>
               <button ref={closeButtonRef} type="button" className="icon-button" onClick={onClose} aria-label="Close job drawer">
                 <X aria-hidden="true" />
               </button>
             </div>
 
-            <form className="job-form" onSubmit={prepareBrief}>
+            <form className="job-form" onSubmit={prepareBrief} noValidate>
               <div className="field-grid">
                 <label className="field">
                   <span>Your name</span>
-                  <input name="name" type="text" autoComplete="name" required />
+                  <input {...fieldProps('name')} type="text" autoComplete="name" required />
+                  {fieldError('name')}
                 </label>
                 <label className="field">
                   <span>Business name</span>
-                  <input name="business" type="text" autoComplete="organization" />
+                  <input {...fieldProps('business')} type="text" autoComplete="organization" />
                 </label>
               </div>
 
               <label className="field">
                 <span>Phone / WhatsApp</span>
-                <input name="phone" type="tel" inputMode="tel" autoComplete="tel" required />
+                <input {...fieldProps('phone')} type="tel" inputMode="tel" autoComplete="tel" required />
+                {fieldError('phone')}
               </label>
 
               <label className="field">
                 <span>What are you printing?</span>
-                <input name="job" type="text" required />
+                <input {...fieldProps('job')} type="text" required />
+                {fieldError('job')}
               </label>
 
               <div className="field-grid">
                 <label className="field">
                   <span>Finished size</span>
-                  <input name="size" type="text" placeholder="e.g. 90 × 54 mm" />
+                  <input {...fieldProps('size')} type="text" placeholder="e.g. 90 × 54 mm" />
                 </label>
                 <label className="field">
                   <span>Quantity</span>
-                  <input name="quantity" type="number" inputMode="numeric" min="1" required />
+                  <input {...fieldProps('quantity')} type="number" inputMode="numeric" min="1" step="1" required />
+                  {fieldError('quantity')}
                 </label>
               </div>
 
               <div className="field-grid">
                 <label className="field">
                   <span>Material preference</span>
-                  <input name="material" type="text" />
+                  <input {...fieldProps('material')} type="text" />
                 </label>
                 <label className="field">
                   <span>Finishing requirement</span>
-                  <input name="finishing" type="text" />
+                  <input {...fieldProps('finishing')} type="text" />
                 </label>
               </div>
 
               <label className="field">
                 <span>Additional notes</span>
-                <textarea name="notes" rows={4} />
+                <textarea {...fieldProps('notes')} rows={4} />
               </label>
 
               <label className="upload-slot">
                 <input
                   type="file"
+                  aria-label="Artwork or reference file"
                   accept=".pdf,.ai,.psd,.jpg,.jpeg,.png"
                   onChange={handleFileChange}
                 />
                 <FileUp aria-hidden="true" />
                 <strong>{selectedFile ? selectedFile.name : 'Choose artwork or a reference file'}</strong>
                 <span>
-                  PDF, AI, PSD, JPG or PNG up to 20 MB. Selection stays on your device and is not uploaded.
+                  PDF, AI, PSD, JPG or PNG up to 20 MB. Selection stays on your device. Attach the file separately in WhatsApp; it is not uploaded here.
                 </span>
               </label>
               {fileError && <p className="form-message form-message--error" role="alert">{fileError}</p>}
@@ -221,16 +253,24 @@ export function JobDrawer({ open, onClose }: JobDrawerProps) {
                 Prepare job brief <ArrowRight aria-hidden="true" />
               </button>
               <p className="submission-note">
-                This prepares a local brief only. Online submission and artwork routing are not connected yet.
+                Review your brief, continue in WhatsApp, attach any artwork and tap Send. Your draft stays available while this page remains open.
               </p>
+
+              {attempted && !valid && (
+                <p className="form-message form-message--error" role="alert">Check the highlighted fields before preparing your brief.</p>
+              )}
 
               {brief && (
                 <section className="brief-result" aria-live="polite">
                   <div>
-                    <p className="eyebrow">Prepared locally</p>
+                    <p className="eyebrow">Review before sending</p>
                     <h3>Your job brief is ready.</h3>
                   </div>
                   <pre>{brief}</pre>
+                  <a className="button button--accent button--wide" href={getWhatsAppUrl(brief)} target="_blank" rel="noopener noreferrer">
+                    Continue in WhatsApp <ArrowRight aria-hidden="true" />
+                  </a>
+                  <p className="submission-note">Opens WhatsApp in a new tab or app. Review the message and tap Send to deliver it to {JOB_RECIPIENT.name}.</p>
                   <button type="button" className="button button--ink button--wide" onClick={copyBrief}>
                     {copyState === 'copied' ? <Check aria-hidden="true" /> : <Clipboard aria-hidden="true" />}
                     {copyState === 'copied' ? 'Brief copied' : 'Copy job brief'}
