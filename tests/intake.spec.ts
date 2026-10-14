@@ -208,6 +208,14 @@ test('mobile menu anchors settle below the header with normal motion', async ({ 
   await page.locator('.mobile-nav').getByRole('link', { name: 'Services' }).click();
   await expect(page.locator('.mobile-nav')).toHaveCount(0);
   await expect.poll(async () => Math.abs((await page.locator('#services').boundingBox())!.y - (headerHeight + 8))).toBeLessThanOrEqual(2);
+  await page.setViewportSize({ width: 620, height: 360 });
+  await page.locator('.brand').click();
+  await page.getByRole('button', { name: 'Open navigation menu' }).click();
+  const menu = page.locator('.mobile-nav');
+  await expect.poll(() => menu.evaluate(element => element.clientHeight)).toBeGreaterThan(200);
+  const lastLink = menu.getByRole('link', { name: /Process/ });
+  await lastLink.scrollIntoViewIfNeeded();
+  await expect(lastLink).toBeInViewport({ ratio: 1 });
 });
 
 test('shared drawer and page assets work on every interior route', async ({ page }) => {
@@ -219,6 +227,9 @@ test('shared drawer and page assets work on every interior route', async ({ page
   for (const route of ['products', 'capabilities', 'work', 'artwork-guide', 'process', 'start-a-job', 'commercial-print', 'packaging', 'dtf-transfers', 'custom-production']) {
     await page.goto(`/${route}.html`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    const darkLabels = await page.locator('.section-head--dark .eyebrow, .start-job-hero .eyebrow').evaluateAll(elements =>
+      elements.map(element => getComputedStyle(element).color));
+    for (const color of darkLabels) expect(contrast(color, 'rgb(23, 23, 23)'), `${route} dark label`).toBeGreaterThanOrEqual(4.5);
     await page.locator('.header-cta').click();
     await fillRequired(page);
     await page.getByRole('button', { name: 'Prepare job brief' }).click();
