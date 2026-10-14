@@ -37,6 +37,7 @@ test('proof cards open the corresponding production example on phones and deskto
       await link.press('Enter');
       await expect(page).toHaveURL(new RegExp(`/work.html#${id}$`));
       const example = page.locator(`#${id}`);
+      await expect(example).toBeFocused();
       await expect(example.getByRole('heading', { name: title, exact: true })).toBeVisible();
       const headerHeight = (await page.locator('.site-header').boundingBox())!.height;
       await expect.poll(async () => Math.abs((await example.boundingBox())!.y - (headerHeight + 8))).toBeLessThanOrEqual(2);

@@ -1,8 +1,21 @@
 import { ArrowRight } from 'lucide-react';
+import { useLayoutEffect } from 'react';
 import { InteriorShell } from './InteriorShell';
 import { productionJobs } from './data';
 
 export default function WorkPage() {
+  useLayoutEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (!productionJobs.some(job => job.id === id)) return;
+    // Incoming fragments need the client-rendered archive and measured masthead.
+    const frame = window.requestAnimationFrame(() => {
+      const example = document.getElementById(id);
+      example?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      example?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
   return (
     <InteriorShell current="Work">
       <section className="interior-hero">
@@ -22,12 +35,12 @@ export default function WorkPage() {
         <div className="site-wrap">
           <div className="wave3-work-grid">
             {productionJobs.map((job, index) => (
-              <article id={job.id} className={index === 0 ? 'wave3-work-card wave3-work-card--feature' : 'wave3-work-card'} key={job.title}>
+              <article id={job.id} tabIndex={-1} aria-labelledby={`production-example-${job.id}`} className={index === 0 ? 'wave3-work-card wave3-work-card--feature' : 'wave3-work-card'} key={job.title}>
                 <img src={job.image} alt={job.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
                 <div className="wave3-work-card__scrim" aria-hidden="true" />
                 <div className="wave3-work-card__meta">
                   <span>0{index + 1} / {job.category}</span>
-                  <h2>{job.title}</h2>
+                  <h2 id={`production-example-${job.id}`}>{job.title}</h2>
                   <p>{job.meta}</p>
                 </div>
               </article>

@@ -42,4 +42,3 @@ Use case: product-mockup. Asset type: one photograph for an existing Jubbir Prin
 ## Verification
 
 The existing intake regressions remain required. Browser verification must cover product-image loading, distinct image sources, useful detail links, the locked section/stage order, connector geometry, and layouts at 320/390/620/768/1024/1440 px. Record exact final commit and CI run in the PR after checks pass.
-
