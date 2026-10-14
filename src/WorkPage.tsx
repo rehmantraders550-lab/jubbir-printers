@@ -12,7 +12,7 @@ export default function WorkPage() {
             <h1>Work, not decoration.</h1>
           </div>
           <div className="interior-hero__aside">
-            <p>Selected production is presented as evidence: printed objects, substrates, finishing and output—not generic lifestyle imagery.</p>
+            <p>Production examples show how print, substrates and finishing come together across different routes.</p>
             <a className="text-link" href="#production-archive">View production archive <ArrowRight aria-hidden="true" /></a>
           </div>
         </div>
@@ -22,7 +22,7 @@ export default function WorkPage() {
         <div className="site-wrap">
           <div className="wave3-work-grid">
             {productionJobs.map((job, index) => (
-              <article className={index === 0 ? 'wave3-work-card wave3-work-card--feature' : 'wave3-work-card'} key={job.title}>
+              <article id={job.id} className={index === 0 ? 'wave3-work-card wave3-work-card--feature' : 'wave3-work-card'} key={job.title}>
                 <img src={job.image} alt={job.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
                 <div className="wave3-work-card__scrim" aria-hidden="true" />
                 <div className="wave3-work-card__meta">
@@ -41,9 +41,9 @@ export default function WorkPage() {
           <div className="section-head section-head--dark">
             <div>
               <p className="eyebrow">Reading the work</p>
-              <h2>Four things each job proves.</h2>
+              <h2>Four details to read in each example.</h2>
             </div>
-            <p>Jubbir's production evidence is organised around route, material, finishing and intended output.</p>
+            <p>Read each example through its route, material, finishing and intended output.</p>
           </div>
           <div className="production-reading__grid">
             {[
@@ -60,7 +60,7 @@ export default function WorkPage() {
         <div className="site-wrap archive-register">
           <div>
             <p className="eyebrow">Current archive</p>
-            <h2>Verified production references.</h2>
+            <h2>Production examples at a glance.</h2>
           </div>
           <div>
             {productionJobs.map((job, index) => (
