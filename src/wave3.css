@@ -417,6 +417,22 @@
 
 .process-hero .button { align-self: flex-start; }
 
+.process-hero .button--outline {
+  border-color: rgb(255 255 255 / 55%);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.process-hero .button--outline:focus-visible {
+  outline-color: var(--white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .process-hero .button--outline:hover {
+    background: var(--surface);
+  }
+}
+
 .full-process-section { background: #fbf9f4; }
 
 .full-process-stack article {

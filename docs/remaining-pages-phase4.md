@@ -13,6 +13,7 @@ Parent main validation `38599548153`, branch publishing `38599548151` and Pages 
 - Explain manual WhatsApp attachment on the artwork guide; preserve its six preflight checks and the seven production stages.
 - Improve remaining light-section label and numbering readability. Keep the technical diagram schematic, with clearer boundaries and labels.
 - Give narrow capability headings the full row and make existing text links touch-safe.
+- Correct the Process hero's Follow the route button after screenshot review showed dark text against the dark photograph; include its resting and hover states in contrast checks.
 
 The homepage architecture, hero copy, approved routes, palette, logo, business contacts and ORVIA attribution are preserved. Existing images are reused and given their intrinsic aspect ratio. No files are deleted, and no new dependencies, framework, upload backend or pricing logic are introduced.
 

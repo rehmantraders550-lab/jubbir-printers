@@ -51,6 +51,19 @@ test('small controls and light-surface labels have readable contrast', async ({ 
     }));
     expect(labels.length).toBeGreaterThan(0);
     for (const label of labels) expect(contrast(label.foreground, label.background), `${route}: ${label.text}`).toBeGreaterThanOrEqual(4.5);
+    if (route === 'process') {
+      const follow = page.getByRole('link', { name: 'Follow the route', exact: true });
+      for (const hover of [false, true]) {
+        if (hover) await follow.hover();
+        await expect.poll(async () => {
+          const colors = await follow.evaluate(element => {
+            const style = getComputedStyle(element);
+            return { foreground: style.color, background: style.backgroundColor };
+          });
+          return contrast(colors.foreground, colors.background);
+        }).toBeGreaterThanOrEqual(4.5);
+      }
+    }
   }
 });
 
