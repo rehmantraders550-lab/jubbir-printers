@@ -154,12 +154,33 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
       if (width <= 860) expect(layout.visual.y).toBeGreaterThanOrEqual(layout.copy.bottom - 1);
       else expect(layout.visual.y).toBe(layout.copy.y);
       await expect(page.locator('.desk-register li')).toHaveCount(5);
+      const productImages = await page.locator('.home-product-card img').evaluateAll(images => images.map(image => (image as HTMLImageElement).src));
+      expect(productImages).toHaveLength(8);
+      expect(new Set(productImages).size).toBe(8);
       // Bring lazy images into view before recording or judging the full page.
       for (const img of await page.locator('img').all()) {
         await img.scrollIntoViewIfNeeded();
         await expect.poll(() => img.evaluate(element => (element as HTMLImageElement).complete && (element as HTMLImageElement).naturalWidth > 0)).toBe(true);
       }
       await page.locator('.brand').click();
+      if (width === 1440) {
+        const connector = await page.evaluate(() => {
+          const register = document.querySelector('.process-register')!;
+          const box = register.getBoundingClientRect();
+          const style = getComputedStyle(register, '::before');
+          const markers = [...register.querySelectorAll('.process-marker')].map(marker => {
+            const rect = marker.getBoundingClientRect();
+            return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+          });
+          return {
+            start: box.x + parseFloat(style.left), end: box.right - parseFloat(style.right),
+            y: box.y + parseFloat(style.top) + parseFloat(style.height) / 2, markers,
+          };
+        });
+        expect(Math.abs(connector.start - connector.markers[0].x)).toBeLessThanOrEqual(1);
+        expect(Math.abs(connector.end - connector.markers[6].x)).toBeLessThanOrEqual(1);
+        for (const marker of connector.markers) expect(Math.abs(connector.y - marker.y)).toBeLessThanOrEqual(1);
+      }
       await page.screenshot({ path: testInfo.outputPath(`home-${width}.png`), fullPage: true });
       if (width <= 860) {
         const menu = page.getByRole('button', { name: 'Open navigation menu' });

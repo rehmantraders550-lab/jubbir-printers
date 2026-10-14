@@ -98,6 +98,7 @@ export const capabilities: Capability[] = [
 
 export const productionJobs = [
   {
+    id: 'retail-carton',
     title: 'Retail Carton',
     category: 'Packaging',
     meta: 'Offset / Printed board / Matte lamination',
@@ -106,6 +107,7 @@ export const productionJobs = [
     className: 'proof-card--primary',
   },
   {
+    id: 'dtf-transfer',
     title: 'DTF Transfer',
     category: 'Transfer',
     meta: 'Full colour / Gang sheet / Apparel',
@@ -114,6 +116,7 @@ export const productionJobs = [
     className: 'proof-card--secondary',
   },
   {
+    id: 'commercial-brochure',
     title: 'Commercial Brochure',
     category: 'Commercial',
     meta: 'Offset / Coated paper / Folded',
@@ -122,6 +125,7 @@ export const productionJobs = [
     className: 'proof-card--tertiary',
   },
   {
+    id: 'product-labels',
     title: 'Product Labels',
     category: 'Labels',
     meta: 'Adhesive stock / Full colour / Custom cut',
@@ -142,7 +146,7 @@ export const artworkChecks = [
 
 export const processSteps = [
   ['01', 'Specify', 'Share size, quantity, material and finishing requirements.'],
-  ['02', 'Upload', 'Send artwork or reference files for review.'],
+  ['02', 'Upload', 'Attach artwork or reference files in WhatsApp for review.'],
   ['03', 'Review', 'We inspect the job and flag production issues where needed.'],
   ['04', 'Quote', 'A quotation is prepared around the confirmed specification.'],
   ['05', 'Approve', 'Artwork, specification and quotation are locked before production.'],

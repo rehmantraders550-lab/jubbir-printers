@@ -19,16 +19,20 @@ import brochureImage from './assets/images/jubbir-brochure-v2.webp';
 import dtfImage from './assets/images/jubbir-dtf-transfer-v2.webp';
 import labelsImage from './assets/images/jubbir-labels-v2.webp';
 import cartonImage from './assets/images/jubbir-retail-carton-v2.webp';
+import businessCardsImage from './assets/images/jubbir-business-cards-v1.webp';
+import stationeryImage from './assets/images/jubbir-stationery-v1.webp';
+import bulkPrintingImage from './assets/images/jubbir-bulk-printing-v1.webp';
+import customJobsImage from './assets/images/jubbir-custom-jobs-v1.webp';
 
 const homepageProducts = [
-  { title: 'Business Cards', route: 'Commercial Print', image: brochureImage, href: './commercial-print.html' },
+  { title: 'Business Cards', route: 'Commercial Print', image: businessCardsImage, href: './commercial-print.html' },
   { title: 'Packaging', route: 'Packaging', image: cartonImage, href: './packaging.html' },
   { title: 'Labels', route: 'Custom Production', image: labelsImage, href: './custom-production.html' },
   { title: 'Brochures', route: 'Commercial Print', image: brochureImage, href: './commercial-print.html' },
   { title: 'DTF Transfers', route: 'DTF Transfers', image: dtfImage, href: './dtf-transfers.html' },
-  { title: 'Stationery', route: 'Commercial Print', image: brochureImage, href: './commercial-print.html' },
-  { title: 'Bulk Printing', route: 'Custom Production', image: brochureImage, href: './custom-production.html' },
-  { title: 'Custom Jobs', route: 'Custom Production', image: labelsImage, href: './custom-production.html' },
+  { title: 'Stationery', route: 'Commercial Print', image: stationeryImage, href: './commercial-print.html' },
+  { title: 'Bulk Printing', route: 'Custom Production', image: bulkPrintingImage, href: './custom-production.html' },
+  { title: 'Custom Jobs', route: 'Custom Production', image: customJobsImage, href: './custom-production.html' },
 ] as const;
 
 const navigation = [
@@ -189,7 +193,7 @@ export default function ProductionDesk() {
           <div className="site-wrap home-product-register__grid">
             {homepageProducts.map((product, index) => (
               <a className="home-product-card" href={product.href} key={product.title}>
-                <img src={product.image} alt="" loading="lazy" decoding="async" />
+                <img src={product.image} alt="" width="1200" height="800" loading="lazy" decoding="async" />
                 <span className="home-product-card__scrim" aria-hidden="true" />
                 <span className="home-product-card__meta">
                   <small>{String(index + 1).padStart(2, '0')} / {product.route}</small>
@@ -198,6 +202,7 @@ export default function ProductionDesk() {
               </a>
             ))}
           </div>
+          <p className="site-wrap home-product-register__note">Illustrative product examples. Specifications are confirmed with the desk.</p>
         </section>
 
         <section id="services" className="section section--paper">
@@ -285,6 +290,7 @@ export default function ProductionDesk() {
                 </article>
               ))}
             </div>
+            <a className="section-detail-link" href="./capabilities.html">Explore the capability register <ArrowRight aria-hidden="true" /></a>
           </div>
         </section>
 
@@ -295,21 +301,22 @@ export default function ProductionDesk() {
                 <p className="eyebrow">Selected production</p>
                 <h2>Work, not decoration.</h2>
               </div>
-              <p>Printed objects, real substrates and finished production—not generic studio imagery.</p>
+              <p>Production examples organised by print route, material and finishing.</p>
             </div>
             <div className="proof-wall">
               {productionJobs.map((job, index) => (
-                <article className={`proof-card ${job.className}`} key={job.title}>
+                <a className={`proof-card ${job.className}`} href={`./work.html#${job.id}`} aria-label={`Explore ${job.title} production example`} key={job.title}>
                   <img src={job.image} alt={job.alt} loading="lazy" decoding="async" />
                   <div className="proof-card__scrim" aria-hidden="true" />
                   <div className="proof-card__meta">
                     <small>0{index + 1} / {job.category}</small>
-                    <h3>{job.title}</h3>
+                    <h3>{job.title}<ArrowRight aria-hidden="true" /></h3>
                     <p>{job.meta}</p>
                   </div>
-                </article>
+                </a>
               ))}
             </div>
+            <a className="section-detail-link" href="./work.html">View all production examples <ArrowRight aria-hidden="true" /></a>
           </div>
         </section>
 
@@ -319,6 +326,7 @@ export default function ProductionDesk() {
               <p className="eyebrow">Artwork check</p>
               <h2>Before you send the file.</h2>
               <p>A few simple checks can prevent delays before production.</p>
+              <a className="section-detail-link" href="./artwork-guide.html">Read the artwork guide <ArrowRight aria-hidden="true" /></a>
             </div>
             <div className="artwork-register">
               {artworkChecks.map(([number, title, copy]) => (
@@ -353,6 +361,7 @@ export default function ProductionDesk() {
                 </li>
               ))}
             </ol>
+            <a className="section-detail-link" href="./process.html">Read the full process <ArrowRight aria-hidden="true" /></a>
           </div>
         </section>
 
