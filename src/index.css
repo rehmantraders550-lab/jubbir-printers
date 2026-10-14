@@ -24,7 +24,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 86px;
+  scroll-padding-top: var(--header-offset, 105px);
 }
 
 body {
@@ -250,8 +250,8 @@ img {
 }
 
 .mobile-nav a span {
-  color: var(--accent);
-  font-size: 10px;
+  color: var(--ink);
+  font-size: 12px;
   letter-spacing: 0.16em;
 }
 
@@ -286,11 +286,16 @@ img {
 
 .button--accent {
   background: var(--accent);
-  color: var(--white);
+  color: var(--ink);
 }
 
 .button--accent:hover {
   background: var(--accent-deep);
+  color: var(--white);
+}
+
+.button--accent:focus-visible {
+  outline-color: var(--ink);
 }
 
 .button--outline {
@@ -340,8 +345,8 @@ img {
 .eyebrow,
 .micro-label {
   margin: 0;
-  color: var(--accent);
-  font-size: 10px;
+  color: var(--ink);
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -614,7 +619,7 @@ img {
   border-bottom: 1px solid rgb(23 23 23 / 18%);
   padding: 12px 3px;
   background: transparent;
-  color: rgb(23 23 23 / 42%);
+  color: var(--muted);
   text-align: left;
   transition: color 160ms ease;
 }
@@ -629,7 +634,7 @@ img {
 
 .service-tabs button small {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.15em;
 }
 
@@ -689,7 +694,7 @@ img {
 
 .micro-label {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.18em;
 }
 
@@ -772,8 +777,8 @@ img {
 }
 
 .capability-number {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.16em;
 }
@@ -967,8 +972,8 @@ img {
 }
 
 .artwork-register article > span {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.14em;
 }
@@ -1017,8 +1022,8 @@ img {
 
 .process-number {
   display: block;
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.16em;
 }
@@ -1223,6 +1228,8 @@ img {
   width: min(610px, 100%);
   height: 100dvh;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-block: 24px;
   border-left: 1px solid rgb(23 23 23 / 16%);
   padding: clamp(24px, 4vw, 42px);
   background: var(--paper);
@@ -1290,7 +1297,7 @@ img {
   display: block;
   margin-bottom: 8px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -1305,7 +1312,7 @@ img {
   padding: 13px 14px;
   background: var(--white);
   color: var(--ink);
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
@@ -1319,6 +1326,20 @@ img {
 .field textarea {
   min-height: 112px;
   resize: vertical;
+}
+
+.field input[aria-invalid="true"] {
+  border-color: #9d2e1d;
+}
+
+.field > .field-error {
+  margin: 7px 0 0;
+  color: #9d2e1d;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .upload-slot {
@@ -1357,20 +1378,21 @@ img {
 .upload-slot strong {
   margin-top: 8px;
   font-size: 13px;
+  overflow-wrap: anywhere;
 }
 
 .upload-slot span {
   max-width: 430px;
   margin-top: 6px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.55;
 }
 
 .submission-note,
 .form-message {
   margin: -6px 0 0;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.55;
   text-align: center;
 }
@@ -1410,6 +1432,7 @@ img {
   font-size: 12px;
   line-height: 1.65;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 1100px) {
@@ -1539,10 +1562,6 @@ img {
 }
 
 @media (max-width: 620px) {
-  html {
-    scroll-padding-top: 74px;
-  }
-
   .site-wrap {
     width: min(100% - 28px, 1240px);
   }
@@ -1857,7 +1876,7 @@ img {
 
 .production-desk-home .service-tabs button small,
 .production-desk-home .micro-label {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .production-desk-home .service-details li {
@@ -1884,7 +1903,7 @@ img {
 }
 
 .production-desk-home .artwork-register article > span {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .production-desk-home .artwork-register h3 {
@@ -1931,6 +1950,11 @@ img {
 
 /* Tablet: recompose rather than proportionally shrinking desktop. */
 @media (max-width: 860px) {
+  .production-desk-home .hero-grid {
+    min-height: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .production-desk-home .hero-copy {
     min-height: auto;
     padding: 72px 32px 64px;
@@ -2102,15 +2126,15 @@ img {
   }
 
   .header-cta {
-    min-height: 38px;
+    min-height: 44px;
     padding: 8px 9px;
     font-size: 10px;
     line-height: 1.1;
   }
 
   .menu-button {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
   }
 
   .production-desk-home .hero-copy {
@@ -2176,6 +2200,16 @@ img {
   .header-inner {
     min-height: 96px;
     gap: 10px;
+  }
+
+  .header-cta {
+    min-height: 44px;
+    font-size: 12px;
+  }
+
+  .menu-button {
+    width: 44px;
+    height: 44px;
   }
 
   .brand-lockup {

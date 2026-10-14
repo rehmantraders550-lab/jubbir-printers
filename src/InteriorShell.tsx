@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useCallback, useState, type ReactNode } from 'react';
 import { JobDrawer } from './JobDrawer';
 import { BrandLogo } from './BrandLogo';
+import { useHeaderOffset } from './useHeaderOffset';
 
 const nav = [
   ['Home', './index.html'],
@@ -22,11 +23,14 @@ export function InteriorShell({ children, current }: InteriorShellProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const reduceMotion = useReducedMotion();
+  const headerBarRef = useHeaderOffset();
 
   const openDrawer = useCallback(() => {
     setMenuOpen(false);
     setDrawerOpen(true);
   }, []);
+
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
   return (
     <div
@@ -38,7 +42,7 @@ export function InteriorShell({ children, current }: InteriorShellProps) {
     >
       <a className="skip-link" href="#main-content">Skip to content</a>
       <header className="site-header">
-        <div className="site-wrap header-inner">
+        <div ref={headerBarRef} className="site-wrap header-inner">
           <a className="brand" href="./index.html" aria-label="Jubbir Printers home">
             <BrandLogo />
           </a>
@@ -123,7 +127,7 @@ export function InteriorShell({ children, current }: InteriorShellProps) {
           <span>PRINT WITH PURPOSE.</span>
         </div>
       </footer>
-      <JobDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <JobDrawer open={drawerOpen} onClose={closeDrawer} />
     </div>
   );
 }

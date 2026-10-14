@@ -1,5 +1,6 @@
 import { ArrowRight, ClipboardList, FileUp, Ruler, Layers3 } from 'lucide-react';
 import { InteriorShell } from './InteriorShell';
+import { JOB_RECIPIENT } from './jobBrief';
 
 export default function StartJobPage() {
   return (
@@ -11,8 +12,8 @@ export default function StartJobPage() {
             <h1>Bring the essentials. Build the brief.</h1>
           </div>
           <div>
-            <p>This page helps prepare the information Jubbir needs before quotation. The actual intake remains the validated local Job Brief drawer.</p>
-            <p className="submission-note">Online submission and artwork routing are not connected yet.</p>
+            <p>This page helps prepare the information Jubbir needs before quotation. Use the Start a Job drawer to review your brief and open it in WhatsApp for {JOB_RECIPIENT.name} at {JOB_RECIPIENT.displayPhone}.</p>
+            <p className="submission-note">Attach artwork in WhatsApp and tap Send to deliver your request.</p>
           </div>
         </div>
       </section>
@@ -51,12 +52,12 @@ export default function StartJobPage() {
       <section className="section local-brief-section">
         <div className="site-wrap local-brief">
           <div>
-            <p className="eyebrow eyebrow--dark">Validated intake behavior</p>
+            <p className="eyebrow eyebrow--dark">Review before sending</p>
             <h2>The brief is prepared locally.</h2>
-            <p>The artwork selector does not upload your file. The form prepares a structured brief on your device and lets you copy it for manual handoff.</p>
+            <p>The artwork selector keeps a reference on your device. Review the structured brief, continue in WhatsApp, attach your artwork separately and tap Send. You can also copy the brief.</p>
           </div>
           <div className="local-brief__steps">
-            {['Enter the specification','Optionally select a local artwork/reference file','Prepare the structured brief','Copy the brief for manual handoff'].map((s,i)=><span key={s}><small>0{i+1}</small>{s}</span>)}
+            {['Enter the specification','Optionally select an artwork/reference file','Prepare and review the structured brief','Open WhatsApp, attach artwork and tap Send'].map((s,i)=><span key={s}><small>0{i+1}</small>{s}</span>)}
           </div>
         </div>
       </section>
@@ -65,8 +66,8 @@ export default function StartJobPage() {
         <div className="site-wrap start-job-action">
           <div>
             <p className="eyebrow">Production Desk intake</p>
-            <h2>Ready? Open the validated Job Brief.</h2>
-            <p>The header button opens the same intake from anywhere on this page. No submission success is simulated.</p>
+            <h2>Ready? Start a Job.</h2>
+            <p>The header button opens the same intake from anywhere on this page.</p>
           </div>
           <a className="button button--accent" href="./index.html#top">Open from Production Desk <ArrowRight aria-hidden="true" /></a>
         </div>

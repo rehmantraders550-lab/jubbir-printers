@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, Check, ChevronRight, Menu, X } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { JobDrawer } from './JobDrawer';
+import { useHeaderOffset } from './useHeaderOffset';
 import {
   artworkChecks,
   capabilities,
@@ -45,6 +46,7 @@ export default function ProductionDesk() {
   const [menuOpen, setMenuOpen] = useState(false);
   const serviceTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const reduceMotion = useReducedMotion();
+  const headerBarRef = useHeaderOffset();
   const active = useMemo(() => services[activeService], [activeService]);
 
   const openDrawer = useCallback(() => {
@@ -80,7 +82,7 @@ export default function ProductionDesk() {
       <a className="skip-link" href="#main-content">Skip to content</a>
 
       <header className="site-header">
-        <div className="site-wrap header-inner">
+        <div ref={headerBarRef} className="site-wrap header-inner">
           <a className="brand" href="#top" aria-label="Jubbir Printers home">
             <BrandLogo />
           </a>
