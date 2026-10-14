@@ -6,8 +6,9 @@ import heroImage from './assets/images/jubbir-hero-v2.webp';
 export default function ProcessPage() {
   return (
     <InteriorShell current="Process">
+      {(openJobDrawer) => <>
       <section className="process-hero">
-        <div className="process-hero__media"><img src={heroImage} alt="Commercial print production in progress" fetchPriority="high" decoding="async" /><div aria-hidden="true" /></div>
+        <div className="process-hero__media"><img src={heroImage} alt="Commercial print production in progress" width={1536} height={1024} fetchPriority="high" decoding="async" /><div aria-hidden="true" /></div>
         <div className="site-wrap process-hero__content">
           <p className="eyebrow">How a job moves through Jubbir</p>
           <h1>Clear stages. Fewer surprises.</h1>
@@ -57,9 +58,10 @@ export default function ProcessPage() {
       <section className="final-cta-section">
         <div className="site-wrap final-cta">
           <div><p className="eyebrow eyebrow--dark">Start a job</p><h2>Begin with the essentials.</h2><p>Prepare size, quantity, artwork and any material or finishing preference.</p></div>
-          <a className="button button--ink" href="./start-a-job.html">Prepare your job <ArrowRight aria-hidden="true" /></a>
+          <button type="button" className="button button--ink" onClick={openJobDrawer}>Start a Job <ArrowRight aria-hidden="true" /></button>
         </div>
       </section>
+      </>}
     </InteriorShell>
   );
 }

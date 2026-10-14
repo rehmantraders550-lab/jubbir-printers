@@ -12,7 +12,9 @@
 }
 
 .interior-hero .eyebrow,
-.interior-section .eyebrow {
+.interior-section .eyebrow,
+.preflight-section .eyebrow,
+.final-cta .eyebrow--dark {
   color: var(--ink);
 }
 
@@ -48,6 +50,7 @@
 
 .text-link {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   gap: 9px;
   margin-top: 28px;
@@ -374,8 +377,8 @@
 }
 
 .technical-register span {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 11px;
   font-weight: 900;
   letter-spacing: .13em;
 }
@@ -449,8 +452,8 @@
 }
 
 .preflight-list article > span {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 11px;
   font-weight: 900;
 }
 
@@ -548,7 +551,11 @@
   }
 
   .capability-deep__head {
-    grid-template-columns: 30px 44px 1fr;
+    grid-template-columns: 30px 44px minmax(0, 1fr);
+  }
+
+  .capability-deep__head > div {
+    grid-column: 1 / -1;
   }
 
   .dependency-flow {

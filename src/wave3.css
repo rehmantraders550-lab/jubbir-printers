@@ -1,5 +1,23 @@
 .wave3-work-section { background: #fbf9f4; }
 
+.production-example-note {
+  margin: 24px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.archive-register-section .eyebrow,
+.artwork-guide-section .eyebrow,
+.trim-diagram-section .eyebrow,
+.artwork-file-note .eyebrow,
+.process-route-note .eyebrow,
+.job-prep-section .eyebrow,
+.job-field-register-section .eyebrow,
+.local-brief .eyebrow--dark {
+  color: var(--ink);
+}
+
 .wave3-work-grid {
   display: grid;
   grid-template-columns: 1.2fr .8fr;
@@ -127,28 +145,45 @@
   border-top: 1px solid rgb(23 23 23 / 17%);
 }
 
-.archive-register article {
+.archive-register__link {
   display: grid;
   grid-template-columns: 44px minmax(160px,.7fr) minmax(0,1.3fr);
   gap: 18px;
   padding-block: 22px;
   border-bottom: 1px solid rgb(23 23 23 / 17%);
   align-items: baseline;
+  min-height: 64px;
 }
 
-.archive-register article span,
+.archive-register__link > span,
 .artwork-guide-register article > span,
 .job-field-register span {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 11px;
   font-weight: 900;
   letter-spacing: .14em;
 }
 
-.archive-register article p {
+.archive-register__link p {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
+}
+
+.archive-register__link strong {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.archive-register__link:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .archive-register__link:hover {
+    background: rgb(23 23 23 / 4%);
+  }
 }
 
 .artwork-guide-section { background: #fbf9f4; }
@@ -232,7 +267,7 @@
 .trim-diagram__bleed {
   position: relative;
   padding: 34px;
-  border: 2px dashed var(--accent);
+  border: 2px dashed var(--accent-deep);
 }
 
 .trim-diagram__trim {
@@ -246,7 +281,7 @@
   display: grid;
   min-height: 190px;
   place-items: center;
-  border: 1px dashed rgb(23 23 23 / 40%);
+  border: 1px dashed rgb(23 23 23 / 60%);
   background: var(--paper);
 }
 
@@ -255,19 +290,19 @@
   position: absolute;
   top: 8px;
   left: 10px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
   letter-spacing: .14em;
 }
 
-.trim-diagram__bleed > span { color: var(--accent); }
+.trim-diagram__bleed > span { color: var(--ink); }
 .trim-diagram__safe span { font-size: 11px; font-weight: 900; letter-spacing: .12em; }
 
 .trim-diagram > small {
   display: block;
   margin-top: 12px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
@@ -382,6 +417,22 @@
 
 .process-hero .button { align-self: flex-start; }
 
+.process-hero .button--outline {
+  border-color: rgb(255 255 255 / 55%);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.process-hero .button--outline:focus-visible {
+  outline-color: var(--white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .process-hero .button--outline:hover {
+    background: var(--surface);
+  }
+}
+
 .full-process-section { background: #fbf9f4; }
 
 .full-process-stack article {
@@ -396,7 +447,7 @@
 .full-process-stack article:last-child { border-bottom: 1px solid rgb(23 23 23 / 17%); }
 
 .full-process-number {
-  color: var(--accent);
+  color: var(--ink);
   font-size: 12px;
   font-weight: 900;
   letter-spacing: .15em;
@@ -482,7 +533,7 @@
   line-height: .9;
 }
 
-.start-job-hero__grid > div:last-child > p:first-child {
+.start-job-hero__grid > div:last-child > p:not(.submission-note) {
   color: rgb(255 255 255 / 76%);
   font-size: 15px;
   line-height: 1.8;
@@ -512,7 +563,8 @@
 .job-prep-grid small {
   display:block;
   margin-top:22px;
-  color:var(--accent);
+  color:var(--ink);
+  font-size:11px;
   font-weight:900;
   letter-spacing:.14em;
 }
@@ -576,7 +628,7 @@
   font-weight:800;
 }
 
-.local-brief__steps small { font-size:9px; letter-spacing:.14em; }
+.local-brief__steps small { font-size:11px; letter-spacing:.14em; }
 
 .start-job-action-section { background:var(--ink); color:var(--white); }
 
@@ -637,8 +689,8 @@
   .wave3-work-card,
   .wave3-work-card--feature { min-height:420px; }
 
-  .archive-register article { grid-template-columns:36px 1fr; }
-  .archive-register article p { grid-column:2; }
+  .archive-register__link { grid-template-columns:36px 1fr; }
+  .archive-register__link p { grid-column:2; }
 
   .trim-diagram { padding:14px; }
   .trim-diagram__bleed { padding:24px; }
