@@ -84,6 +84,14 @@
   background: #fbf9f4;
 }
 
+.service-jobs-section .eyebrow,
+.service-considerations .eyebrow,
+.service-proof-section .eyebrow,
+.service-artwork-section .eyebrow,
+.service-route-links .eyebrow {
+  color: var(--ink);
+}
+
 .service-job-register {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -101,8 +109,8 @@
 }
 
 .service-job-register article > span {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 11px;
   font-weight: 900;
   letter-spacing: .14em;
 }
@@ -338,8 +346,8 @@
 }
 
 .service-artwork-register article > span {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 11px;
   font-weight: 900;
   letter-spacing: .14em;
 }
@@ -391,10 +399,14 @@
 }
 
 .route-link-grid a > span {
-  color: var(--accent);
-  font-size: 9px;
+  color: var(--ink);
+  font-size: 11px;
   font-weight: 900;
   letter-spacing: .14em;
+}
+
+.route-link-grid a[aria-current="page"] > span {
+  color: var(--accent);
 }
 
 .route-link-grid a > strong {

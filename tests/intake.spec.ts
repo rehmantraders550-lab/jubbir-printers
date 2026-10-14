@@ -42,6 +42,16 @@ test('small controls and light-surface labels have readable contrast', async ({ 
       return contrast(color.foreground, color.background);
     }).toBeGreaterThanOrEqual(4.5);
   }
+  for (const route of ['products', 'commercial-print', 'packaging', 'dtf-transfers', 'custom-production']) {
+    await page.goto(`/${route}.html`);
+    const labels = await page.locator('.interior-hero .eyebrow, .interior-section .eyebrow, .product-item-grid small, .service-jobs-section .eyebrow, .service-job-register article > span, .service-considerations .eyebrow, .service-proof-section .eyebrow, .service-artwork-section .eyebrow, .service-artwork-register article > span, .service-route-links .eyebrow, .route-link-grid a:not([aria-current="page"]) > span').evaluateAll(elements => elements.map(element => {
+      let surface: Element | null = element;
+      while (surface && getComputedStyle(surface).backgroundColor === 'rgba(0, 0, 0, 0)') surface = surface.parentElement;
+      return { text: element.textContent, foreground: getComputedStyle(element).color, background: getComputedStyle(surface || document.body).backgroundColor };
+    }));
+    expect(labels.length).toBeGreaterThan(0);
+    for (const label of labels) expect(contrast(label.foreground, label.background), `${route}: ${label.text}`).toBeGreaterThanOrEqual(4.5);
+  }
 });
 
 test('current brief, copy, artwork and draft survive edits and closing', async ({ page, context }) => {

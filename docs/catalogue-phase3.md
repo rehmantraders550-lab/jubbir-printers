@@ -12,6 +12,7 @@ The parent main validation run `38583889797` and publishing run `38583889609` bo
 - Describe the galleries as illustrative examples and remove unsupported claims that they are verified Jubbir client output.
 - Let the catalogue, service and job-preparation page CTAs open the existing shared drawer directly. The shell provides its existing open callback; there is still one drawer and one draft per page.
 - Replace internal Wave labels with public page descriptors.
+- Increase small numbering and light-section label contrast after screenshot review exposed faint orange text on paper surfaces.
 
 Existing image files are reused. No new image generation, dependency, framework, pricing logic or backend is introduced. The homepage, approved hero copy, section order, production process, business contacts and ORVIA footer remain unchanged. No files are deleted.
 
