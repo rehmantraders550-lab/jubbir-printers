@@ -115,3 +115,21 @@ test('sticky header remains opaque while the production route scrolls beneath it
     expect(result.headerBottom).toBeGreaterThan(result.panelTop);
   }
 });
+
+
+test('service route runway updates the pinned panel from scroll', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await page.locator('#services').scrollIntoViewIfNeeded();
+
+  const tabs = page.getByRole('tab');
+  const secondTab = tabs.nth(1);
+  await secondTab.scrollIntoViewIfNeeded();
+  await expect(secondTab).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('#service-panel')).toBeVisible();
+
+  const headerBottom = (await page.locator('.site-header').boundingBox())!.bottom;
+  const panelTop = (await page.locator('#service-panel').boundingBox())!.top;
+  expect(panelTop).toBeGreaterThanOrEqual(headerBottom - 2);
+});
