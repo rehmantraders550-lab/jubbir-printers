@@ -245,26 +245,32 @@ export default function ProductionDesk() {
                 exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
                 transition={{ duration: reduceMotion ? 0 : 0.2 }}
               >
-                <p className="eyebrow">{active.kicker}</p>
-                <h3>{active.title}</h3>
-                <p className="service-description">{active.description}</p>
-                <div className="service-details">
-                  <div>
-                    <p className="micro-label">Typical jobs</p>
-                    <ul>
-                      {active.applications.map((item) => (
-                        <li key={item}><Check aria-hidden="true" />{item}</li>
-                      ))}
-                    </ul>
+                <div className="service-panel__content">
+                  <p className="eyebrow">{active.kicker}</p>
+                  <h3>{active.title}</h3>
+                  <p className="service-description">{active.description}</p>
+                  <div className="service-details">
+                    <div>
+                      <p className="micro-label">Typical jobs</p>
+                      <ul>
+                        {active.applications.map((item) => (
+                          <li key={item}><Check aria-hidden="true" />{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="production-focus">
+                      <p className="micro-label">Production focus</p>
+                      <strong>{active.process}</strong>
+                    </div>
                   </div>
-                  <div className="production-focus">
-                    <p className="micro-label">Production focus</p>
-                    <strong>{active.process}</strong>
-                  </div>
+                  <a className="button button--accent" href={active.href}>
+                    Explore {active.label} <ChevronRight aria-hidden="true" />
+                  </a>
                 </div>
-                <a className="button button--accent" href={active.href}>
-                  Explore {active.label} <ChevronRight aria-hidden="true" />
-                </a>
+                <figure className="service-panel__visual">
+                  <img src={active.image} alt={active.imageAlt} loading="lazy" decoding="async" />
+                  <figcaption>Illustrative production example</figcaption>
+                </figure>
               </motion.article>
             </AnimatePresence>
           </div>
