@@ -4,6 +4,7 @@ import brochureImage from './assets/images/jubbir-brochure-v2.webp';
 import dtfImage from './assets/images/jubbir-dtf-transfer-v2.webp';
 import labelsImage from './assets/images/jubbir-labels-v2.webp';
 import retailCartonImage from './assets/images/jubbir-retail-carton-v2.webp';
+import customJobsImage from './assets/images/jubbir-custom-jobs-v1.webp';
 
 export type ServiceKey = 'commercial' | 'packaging' | 'dtf' | 'custom';
 
@@ -15,6 +16,8 @@ export type Service = {
   applications: string[];
   process: string;
   href: string;
+  image: string;
+  imageAlt: string;
 };
 
 export const serviceOrder: ServiceKey[] = ['commercial', 'packaging', 'dtf', 'custom'];
@@ -29,6 +32,8 @@ export const services: Record<ServiceKey, Service> = {
     applications: ['Business cards', 'Flyers', 'Brochures', 'Menus', 'Tags', 'Stationery'],
     process: 'Offset / short-run production',
     href: './commercial-print.html',
+    image: brochureImage,
+    imageAlt: 'Illustrative commercial brochure and print production example',
   },
   packaging: {
     label: 'Packaging',
@@ -39,6 +44,8 @@ export const services: Record<ServiceKey, Service> = {
     applications: ['Product cartons', 'Sleeves', 'Labels', 'Hang tags', 'Bakery packs', 'Retail packs'],
     process: 'Print / finish / convert',
     href: './packaging.html',
+    image: retailCartonImage,
+    imageAlt: 'Illustrative printed retail carton example',
   },
   dtf: {
     label: 'DTF Transfers',
@@ -49,6 +56,8 @@ export const services: Record<ServiceKey, Service> = {
     applications: ['Logos', 'Chest prints', 'Back prints', 'Uniform graphics', 'Merchandise', 'Gang sheets'],
     process: 'DTF transfer production',
     href: './dtf-transfers.html',
+    image: dtfImage,
+    imageAlt: 'Illustrative DTF transfer production example',
   },
   custom: {
     label: 'Custom Production',
@@ -59,6 +68,8 @@ export const services: Record<ServiceKey, Service> = {
     applications: ['Odd sizes', 'Prototype runs', 'Mixed materials', 'Special finishing', 'Bulk jobs', 'Custom formats'],
     process: 'Specification-led production',
     href: './custom-production.html',
+    image: customJobsImage,
+    imageAlt: 'Illustrative custom production example',
   },
 };
 
