@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, Check, ChevronRight, Menu, X } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
@@ -52,6 +52,26 @@ export default function ProductionDesk() {
   const reduceMotion = useReducedMotion();
   const headerBarRef = useHeaderOffset();
   const active = useMemo(() => services[activeService], [activeService]);
+
+  useEffect(() => {
+    const tabs = serviceTabRefs.current.filter((tab): tab is HTMLButtonElement => Boolean(tab));
+    if (!tabs.length || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        const index = tabs.indexOf(visible.target as HTMLButtonElement);
+        if (index >= 0) setActiveService(serviceOrder[index]);
+      },
+      { rootMargin: '-38% 0px -38% 0px', threshold: [0, 0.35, 0.7, 1] },
+    );
+
+    tabs.forEach((tab) => observer.observe(tab));
+    return () => observer.disconnect();
+  }, []);
 
   const openDrawer = useCallback(() => {
     setMenuOpen(false);
