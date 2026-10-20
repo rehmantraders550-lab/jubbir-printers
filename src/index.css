@@ -2383,3 +2383,12 @@ img {
   }
 }
 
+
+
+/* Official Jubbir Printers logo extracted from the approved business-card artwork. */
+.brand-lockup__official {
+  display: block;
+  width: 68px;
+  height: auto;
+  object-fit: contain;
+}
