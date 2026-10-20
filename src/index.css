@@ -2468,3 +2468,47 @@ img {
     padding: 24px 20px 26px;
   }
 }
+
+
+/* Sticky production route media-swap adaptation.
+   The existing service tabs become the scroll runway; the selected service panel
+   remains pinned beside them and updates from scroll, click, and keyboard input. */
+@media (min-width: 821px) {
+  .production-desk-home #services .service-layout {
+    align-items: start;
+  }
+
+  .production-desk-home #services .service-intro {
+    min-width: 0;
+  }
+
+  .production-desk-home #services .service-tabs {
+    display: grid;
+    gap: 0;
+    align-content: start;
+  }
+
+  .production-desk-home #services .service-tabs > button {
+    min-height: calc(100vh - var(--header-offset, 105px) - 32px);
+    align-items: center;
+  }
+
+  .production-desk-home #services .service-panel {
+    position: sticky;
+    top: calc(var(--header-offset, 105px) + 16px);
+    align-self: start;
+    max-height: calc(100vh - var(--header-offset, 105px) - 32px);
+  }
+}
+
+@media (max-width: 820px) {
+  .production-desk-home #services .service-tabs > button {
+    min-height: 88px;
+  }
+
+  .production-desk-home #services .service-panel {
+    position: relative;
+    top: auto;
+    max-height: none;
+  }
+}
