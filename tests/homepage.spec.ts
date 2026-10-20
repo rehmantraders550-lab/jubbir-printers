@@ -82,3 +82,36 @@ test('service tabs update the illustrative visual stage with keyboard and touch 
     expect(overflow).toBeLessThanOrEqual(1);
   }
 });
+
+test('sticky header remains opaque while the production route scrolls beneath it', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    await page.locator('#services').scrollIntoViewIfNeeded();
+    await page.evaluate(() => {
+      const panel = document.querySelector('.service-panel')!;
+      window.scrollTo({ top: window.scrollY + panel.getBoundingClientRect().top + 180, behavior: 'instant' });
+    });
+
+    const result = await page.evaluate(() => {
+      const header = document.querySelector('.site-header')!;
+      const panel = document.querySelector('.service-panel')!;
+      const headerBox = header.getBoundingClientRect();
+      const panelBox = panel.getBoundingClientRect();
+      const headerStyle = getComputedStyle(header);
+      const panelStyle = getComputedStyle(panel);
+      return {
+        headerBottom: headerBox.bottom,
+        panelTop: panelBox.top,
+        headerBackground: headerStyle.backgroundColor,
+        panelIsolation: panelStyle.isolation,
+      };
+    });
+
+    expect(result.headerBackground).toBe('rgb(243, 239, 231)');
+    expect(result.panelIsolation).toBe('isolate');
+    expect(result.headerBottom).toBeGreaterThan(result.panelTop);
+  }
+});
