@@ -45,3 +45,40 @@ test('proof cards open the corresponding production example on phones and deskto
     }
   }
 });
+
+
+test('service tabs update the illustrative visual stage with keyboard and touch layouts', async ({ page }) => {
+  const expectedAlt = [
+    'Illustrative commercial brochure and print production example',
+    'Illustrative printed retail carton example',
+    'Illustrative DTF transfer production example',
+    'Illustrative custom production example',
+  ];
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/');
+
+    const tabs = page.getByRole('tab');
+    const image = page.locator('.service-panel__visual img');
+    await expect(image).toHaveAttribute('alt', expectedAlt[0]);
+
+    await tabs.nth(0).focus();
+    await tabs.nth(0).press('ArrowRight');
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
+    await expect(image).toHaveAttribute('alt', expectedAlt[1]);
+
+    for (const index of [2, 3]) {
+      await tabs.nth(index).click();
+      await expect(tabs.nth(index)).toHaveAttribute('aria-selected', 'true');
+      await expect(image).toHaveAttribute('alt', expectedAlt[index]);
+      await expect.poll(() => image.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBeGreaterThan(0);
+    }
+
+    const panel = page.locator('#service-panel');
+    const overflow = await panel.evaluate((node) => node.scrollWidth - node.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(1);
+  }
+});
