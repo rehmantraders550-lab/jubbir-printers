@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { ArrowRight, Check, ChevronRight, Menu, X } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { JobDrawer } from './JobDrawer';
@@ -49,7 +49,11 @@ export default function ProductionDesk() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const serviceTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const heroRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroImageScale = useTransform(heroProgress, [0, 1], [1, 1.075]);
+  const heroCopyShift = useTransform(heroProgress, [0, 1], [0, -28]);
   const headerBarRef = useHeaderOffset();
   const active = useMemo(() => services[activeService], [activeService]);
 
@@ -156,10 +160,11 @@ export default function ProductionDesk() {
       </header>
 
       <main id="main-content">
-        <section id="top" className="hero">
+        <section id="top" className="hero hero--editorial" ref={heroRef}>
           <div className="hero-grid">
             <motion.div
               className="hero-copy"
+              style={{ y: reduceMotion ? 0 : heroCopyShift }}
               initial={{ opacity: 0, y: reduceMotion ? 0 : 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: reduceMotion ? 0 : 0.55 }}
@@ -167,7 +172,7 @@ export default function ProductionDesk() {
               <p className="eyebrow">Commercial Print / Packaging / DTF / Custom Production</p>
               <h1 className="hero-title" aria-label="Printing made straightforward.">
                 <span className="hero-title-line">Printing</span>
-                <span className="hero-title-line">made</span>
+                <span className="hero-title-line hero-title-line--accent">made</span>
                 <span className="hero-title-line hero-title-line--long">straightforward.</span>
               </h1>
               <p className="hero-lead">
@@ -184,13 +189,15 @@ export default function ProductionDesk() {
             </motion.div>
 
             <div className="hero-visual">
-              <img
+              <motion.img
+                style={{ scale: reduceMotion ? 1 : heroImageScale }}
                 src={heroImage}
                 alt="Commercial offset press producing full-colour printed sheets"
                 fetchPriority="high"
                 decoding="async"
               />
               <div className="hero-scrim" aria-hidden="true" />
+              <div className="hero-image-caption" aria-hidden="true"><span>01 / MATERIAL INTO FORM</span><span>PRINTING · FINISHING · PRODUCTION</span></div>
               <div className="desk-register" aria-label="Production desk stages">
                 <div className="desk-register__head">
                   <span>Production Desk</span>
