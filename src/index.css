@@ -2512,3 +2512,122 @@ img {
     max-height: none;
   }
 }
+
+
+/* ORVIA | Editorial hero and fluid site rhythm. Scoped and additive. */
+:root {
+  --page-gutter: clamp(16px, 3.5vw, 72px);
+  --section-space: clamp(64px, 8vw, 132px);
+  --content-gap: clamp(18px, 2.6vw, 42px);
+}
+.site-wrap {
+  width: min(1240px, calc(100% - 2 * var(--page-gutter)));
+}
+.production-desk-home .section {
+  padding-block: var(--section-space);
+}
+.production-desk-home .hero--editorial {
+  padding: clamp(14px, 2vw, 30px) var(--page-gutter) 0;
+}
+.production-desk-home .hero--editorial .hero-grid {
+  width: min(1440px, 100%);
+  margin-inline: auto;
+  min-height: clamp(640px, 74svh, 900px);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: var(--content-gap);
+  align-items: stretch;
+}
+.production-desk-home .hero--editorial .hero-copy {
+  min-width: 0;
+  padding: clamp(44px, 6vw, 100px) 0;
+}
+.production-desk-home .hero--editorial .hero h1,
+.production-desk-home .hero--editorial h1 {
+  font-size: clamp(48px, 7.2vw, 112px);
+  margin-block: clamp(20px, 3vw, 38px);
+}
+.production-desk-home .hero--editorial .hero-title-line--accent {
+  color: var(--accent);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.075em;
+}
+.production-desk-home .hero--editorial .hero-visual {
+  min-height: clamp(520px, 68svh, 820px);
+  border-radius: clamp(8px, 1.2vw, 20px) clamp(8px, 1.2vw, 20px) 0 0;
+  isolation: isolate;
+}
+.production-desk-home .hero--editorial .hero-visual > img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transform-origin: 50% 50%;
+}
+.production-desk-home .hero--editorial .hero-image-caption {
+  position: absolute;
+  top: clamp(16px, 2vw, 30px);
+  left: clamp(16px, 2vw, 30px);
+  right: clamp(16px, 2vw, 30px);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-shadow: 0 1px 5px #000b;
+}
+.production-desk-home .hero--editorial .desk-register {
+  right: clamp(12px, 2vw, 28px);
+  bottom: clamp(12px, 2vw, 28px);
+  left: clamp(12px, 2vw, 28px);
+}
+.production-desk-home .home-product-register {
+  padding-block: clamp(20px, 3vw, 48px);
+}
+.production-desk-home .final-cta-section {
+  padding-bottom: var(--section-space);
+}
+.production-desk-home .footer-grid {
+  gap: var(--content-gap);
+}
+@media (max-width: 860px) {
+  .production-desk-home .hero--editorial .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .production-desk-home .hero--editorial .hero-copy {
+    padding-block: clamp(38px, 7vw, 72px);
+  }
+  .production-desk-home .hero--editorial .hero-visual {
+    min-height: clamp(340px, 62vw, 560px);
+  }
+}
+@media (max-width: 620px) {
+  :root {
+    --page-gutter: clamp(16px, 4.8vw, 24px);
+    --section-space: clamp(48px, 11vw, 76px);
+  }
+  .production-desk-home .hero--editorial .hero-copy {
+    padding: clamp(32px, 7vw, 50px) 0;
+  }
+  .production-desk-home .hero--editorial h1 {
+    font-size: clamp(43px, 10.5vw, 66px);
+  }
+  .production-desk-home .hero--editorial .hero-visual {
+    min-height: clamp(350px, 110vw, 510px);
+  }
+  .production-desk-home .hero--editorial .hero-image-caption {
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .production-desk-home .hero--editorial .hero-copy,
+  .production-desk-home .hero--editorial .hero-visual > img {
+    transition: none !important;
+  }
+}
