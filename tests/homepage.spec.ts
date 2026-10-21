@@ -129,7 +129,11 @@ test('service route runway updates the pinned panel from scroll', async ({ page 
   await expect(secondTab).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('#service-panel')).toBeVisible();
 
-  const headerBottom = (await page.locator('.site-header').boundingBox())!.bottom;
-  const panelTop = (await page.locator('#service-panel').boundingBox())!.top;
+  const headerBox = await page.locator('.site-header').boundingBox();
+  const panelBox = await page.locator('#service-panel').boundingBox();
+  expect(headerBox).not.toBeNull();
+  expect(panelBox).not.toBeNull();
+  const headerBottom = headerBox!.y + headerBox!.height;
+  const panelTop = panelBox!.y;
   expect(panelTop).toBeGreaterThanOrEqual(headerBottom - 2);
 });
