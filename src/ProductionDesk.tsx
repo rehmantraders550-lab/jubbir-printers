@@ -55,6 +55,8 @@ export default function ProductionDesk() {
   // Empty until the owner approves an actual source-faithful Google Flow export.
   // There is never a request for a missing video or a paid video-hosting dependency.
   const heroVideoUrl = (import.meta.env.VITE_JUBBIR_HERO_VIDEO_URL ?? '').trim();
+  const saveData = typeof navigator !== 'undefined' &&
+    Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
   const [heroVideoPlaying, setHeroVideoPlaying] = useState(false);
   const headerBarRef = useHeaderOffset();
   const active = useMemo(() => services[activeService], [activeService]);
@@ -189,7 +191,7 @@ export default function ProductionDesk() {
                 fetchPriority="high"
                 decoding="async"
               />
-              {heroVideoUrl && !reduceMotion && (
+              {heroVideoUrl && !reduceMotion && !saveData && (
                 <video
                   className={heroVideoPlaying ? 'hero-motion-video is-playing' : 'hero-motion-video'}
                   autoPlay
