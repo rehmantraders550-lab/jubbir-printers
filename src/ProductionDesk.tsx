@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { ArrowRight, Check, ChevronRight, Menu, X } from 'lucide-react';
+import { ArrowRight, ChevronRight, Menu, X } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { JobDrawer } from './JobDrawer';
 import { useHeaderOffset } from './useHeaderOffset';
@@ -49,6 +49,7 @@ export default function ProductionDesk() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const serviceTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const serviceRouteRefs = useRef<Array<HTMLDivElement | null>>([]);
   const manualSelectionUntil = useRef(0);
   const heroRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
@@ -59,20 +60,19 @@ export default function ProductionDesk() {
   const active = useMemo(() => services[activeService], [activeService]);
 
   useEffect(() => {
-    const tabs = serviceTabRefs.current.filter((tab): tab is HTMLButtonElement => Boolean(tab));
-    if (!tabs.length || typeof IntersectionObserver === 'undefined') return;
+    // Each editorial route is a real reading block. The sticky image follows
+    // whichever block is nearest the reading line; explicit selections win.
+    const routes = serviceRouteRefs.current.filter((route): route is HTMLDivElement => Boolean(route));
+    if (!routes.length || typeof IntersectionObserver === 'undefined') return;
 
-    // The shorter runway selects the route nearest the reading line, not
-    // merely the last IntersectionObserver threshold to fire.
     const observer = new IntersectionObserver(
       (entries) => {
-        // Focus and click may move the page; do not override an explicit choice.
         if (Date.now() < manualSelectionUntil.current) return;
         if (!entries.some((entry) => entry.isIntersecting)) return;
         const readingLine = window.innerHeight * 0.45;
-        const nearest = tabs
-          .map((tab, index) => {
-            const bounds = tab.getBoundingClientRect();
+        const nearest = routes
+          .map((route, index) => {
+            const bounds = route.getBoundingClientRect();
             return {
               index,
               visible: bounds.bottom > 0 && bounds.top < window.innerHeight,
@@ -81,12 +81,13 @@ export default function ProductionDesk() {
           })
           .filter((item) => item.visible)
           .sort((a, b) => a.distance - b.distance)[0];
+
         if (nearest) setActiveService(serviceOrder[nearest.index]);
       },
-      { rootMargin: '-25% 0px -35% 0px', threshold: [0, 0.25, 0.6, 1] },
+      { rootMargin: '-18% 0px -25% 0px', threshold: [0, 0.25, 0.6, 1] },
     );
 
-    tabs.forEach((tab) => observer.observe(tab));
+    routes.forEach((route) => observer.observe(route));
     return () => observer.disconnect();
   }, []);
 
@@ -256,68 +257,83 @@ export default function ProductionDesk() {
               <p className="eyebrow">Choose your production route</p>
               <h2>One desk. Different production paths.</h2>
               <p>The route changes with the job. The interface stays simple.</p>
+
               <div className="service-tabs" role="tablist" aria-label="Production services" aria-orientation="vertical">
-                {serviceOrder.map((key, index) => (
-                  <button
-                    key={key}
-                    ref={(element) => { serviceTabRefs.current[index] = element; }}
-                    id={`service-tab-${key}`}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeService === key}
-                    aria-controls="service-panel"
-                    tabIndex={activeService === key ? 0 : -1}
-                    className={activeService === key ? 'is-active' : ''}
-                    onClick={() => selectService(key)}
-                    onKeyDown={(event) => handleServiceKeyDown(event, index)}
-                  >
-                    <span><small>0{index + 1}</small>{services[key].label}</span>
-                    <span className="tab-indicator" aria-hidden="true" />
-                  </button>
-                ))}
+                {serviceOrder.map((key, index) => {
+                  const route = services[key];
+                  return (
+                    <div
+                      key={key}
+                      className={activeService === key ? 'service-route is-active' : 'service-route'}
+                      ref={(element) => { serviceRouteRefs.current[index] = element; }}
+                      role="presentation"
+                    >
+                      <button
+                        ref={(element) => { serviceTabRefs.current[index] = element; }}
+                        id={`service-tab-${key}`}
+                        type="button"
+                        role="tab"
+                        aria-selected={activeService === key}
+                        aria-controls="service-panel"
+                        tabIndex={activeService === key ? 0 : -1}
+                        className={activeService === key ? 'service-route__trigger is-active' : 'service-route__trigger'}
+                        onClick={() => selectService(key)}
+                        onKeyDown={(event) => handleServiceKeyDown(event, index)}
+                      >
+                        <span><small>0{index + 1}</small>{route.label}</span>
+                      </button>
+
+                      <div className="service-route__content">
+                        <p className="eyebrow">{route.kicker}</p>
+                        <h3>{route.title}</h3>
+                        <p className="service-description">{route.description}</p>
+                        <div className="service-route__metadata">
+                          <div className="service-route__jobs">
+                            <p className="micro-label">Typical jobs</p>
+                            <ul>
+                              {route.applications.map((item) => <li key={item}>{item}</li>)}
+                            </ul>
+                          </div>
+                          <p className="service-route__focus">
+                            <span className="micro-label">Production focus</span>
+                            <strong>{route.process}</strong>
+                          </p>
+                        </div>
+                        <a className="service-route__action" href={route.href}>
+                          Explore {route.label} <ChevronRight aria-hidden="true" />
+                        </a>
+                      </div>
+
+                      <figure className="service-route__mobile-media">
+                        <img src={route.image} alt={route.imageAlt} loading="lazy" decoding="async" />
+                        <figcaption>Illustrative production example</figcaption>
+                      </figure>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.article
-                key={activeService}
-                id="service-panel"
-                role="tabpanel"
-                aria-labelledby={`service-tab-${activeService}`}
-                className="service-panel"
-                initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
-                transition={{ duration: reduceMotion ? 0 : 0.2 }}
-              >
-                <div className="service-panel__content">
-                  <p className="eyebrow">{active.kicker}</p>
-                  <h3>{active.title}</h3>
-                  <p className="service-description">{active.description}</p>
-                  <div className="service-details">
-                    <div>
-                      <p className="micro-label">Typical jobs</p>
-                      <ul>
-                        {active.applications.map((item) => (
-                          <li key={item}><Check aria-hidden="true" />{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="production-focus">
-                      <p className="micro-label">Production focus</p>
-                      <strong>{active.process}</strong>
-                    </div>
-                  </div>
-                  <a className="button button--accent" href={active.href}>
-                    Explore {active.label} <ChevronRight aria-hidden="true" />
-                  </a>
-                </div>
-                <figure className="service-panel__visual">
-                  <img src={active.image} alt={active.imageAlt} loading="lazy" decoding="async" />
+            <article
+              id="service-panel"
+              role="tabpanel"
+              aria-labelledby={`service-tab-${activeService}`}
+              className="service-panel"
+            >
+              <AnimatePresence mode="wait">
+                <motion.figure
+                  key={activeService}
+                  className="service-panel__visual"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.32 }}
+                >
+                  <img src={active.image} alt={active.imageAlt} loading="eager" decoding="async" />
                   <figcaption>Illustrative production example</figcaption>
-                </figure>
-              </motion.article>
-            </AnimatePresence>
+                </motion.figure>
+              </AnimatePresence>
+            </article>
           </div>
         </section>
 

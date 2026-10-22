@@ -47,7 +47,7 @@ test('proof cards open the corresponding production example on phones and deskto
 });
 
 
-test('service tabs update the illustrative visual stage with keyboard and touch layouts', async ({ page }) => {
+test('service navigation swaps desktop photographs and keeps inline mobile images', async ({ page }) => {
   const expectedAlt = [
     'Illustrative commercial brochure and print production example',
     'Illustrative printed retail carton example',
@@ -60,106 +60,118 @@ test('service tabs update the illustrative visual stage with keyboard and touch 
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto('/');
-
     const tabs = page.getByRole('tab');
-    const image = page.locator('.service-panel__visual img');
-    await expect(image).toHaveAttribute('alt', expectedAlt[0]);
+    await expect(tabs).toHaveCount(4);
 
-    await tabs.nth(0).focus();
-    await tabs.nth(0).press('ArrowRight');
-    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
-    await expect(image).toHaveAttribute('alt', expectedAlt[1]);
+    const desktopImage = page.locator('#service-panel .service-panel__visual img');
+    const inlineImages = page.locator('#services .service-route__mobile-media img');
+    await expect(inlineImages).toHaveCount(4);
 
-    for (const index of [2, 3]) {
-      await tabs.nth(index).click();
-      await expect(tabs.nth(index)).toHaveAttribute('aria-selected', 'true');
-      await expect(image).toHaveAttribute('alt', expectedAlt[index]);
-      await expect.poll(() => image.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBeGreaterThan(0);
+    if (width >= 861) {
+      await expect(page.locator('#service-panel')).toBeVisible();
+      await expect(desktopImage).toHaveAttribute('alt', expectedAlt[0]);
+    } else {
+      await expect(page.locator('#service-panel')).toBeHidden();
+      await expect(inlineImages.first()).toBeVisible();
     }
 
-    const panel = page.locator('#service-panel');
-    const overflow = await panel.evaluate((node) => node.scrollWidth - node.clientWidth);
-    expect(overflow).toBeLessThanOrEqual(1);
+    await tabs.first().focus();
+    await tabs.first().press('ArrowRight');
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
+
+    for (const index of [1, 2, 3]) {
+      await tabs.nth(index).click();
+      await expect(tabs.nth(index)).toHaveAttribute('aria-selected', 'true');
+      await expect(page.locator('#services .service-route').nth(index).locator('h3')).toBeVisible();
+
+      if (width >= 861) {
+        await expect(desktopImage).toHaveAttribute('alt', expectedAlt[index]);
+        await expect.poll(() => desktopImage.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+      } else {
+        await expect(inlineImages.nth(index)).toHaveAttribute('alt', expectedAlt[index]);
+        await expect(inlineImages.nth(index)).toBeVisible();
+        await expect.poll(() => inlineImages.nth(index).evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+      }
+    }
   }
 });
-
-test('production routes have a compact runway and balanced responsive detail stage', async ({ page }) => {
+test('route descriptions scroll naturally while desktop image alone stays sticky', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-
   for (const width of [390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     await page.locator('#services').scrollIntoViewIfNeeded();
 
-    const metrics = await page.evaluate(() => {
-      const tab = document.querySelector('.service-tabs > button')!;
-      const active = document.querySelector('.service-tabs > button.is-active')!;
-      const intro = document.querySelector('.service-intro')!;
-      const panel = document.querySelector('.service-panel')!;
-      const visual = document.querySelector('.service-panel__visual')!;
-      const content = document.querySelector('.service-panel__content')!;
-      const tabBox = tab.getBoundingClientRect();
-      const panelBox = panel.getBoundingClientRect();
+    const layout = await page.evaluate(() => {
+      const section = document.querySelector('#services')!;
+      const routes = Array.from(section.querySelectorAll('.service-route'));
+      const detail = document.querySelector('.service-panel')!;
+      const left = document.querySelector('.service-intro')!;
       return {
-        tabHeight: tabBox.height,
-        introWidth: intro.getBoundingClientRect().width,
-        panelWidth: panelBox.width,
-        panelTop: panelBox.top,
+        count: routes.length,
+        routeHeights: routes.map((el) => el.getBoundingClientRect().height),
+        panelDisplay: getComputedStyle(detail).display,
+        panelPosition: getComputedStyle(detail).position,
+        panelTop: detail.getBoundingClientRect().top,
         headerBottom: document.querySelector('.site-header')!.getBoundingClientRect().bottom,
-        panelPosition: getComputedStyle(panel).position,
-        selectedBackground: getComputedStyle(active).backgroundColor,
-        visualTop: visual.getBoundingClientRect().top,
-        contentTop: content.getBoundingClientRect().top,
-        horizontalOverflow: panel.scrollWidth - panel.clientWidth,
+        panelWidth: detail.getBoundingClientRect().width,
+        leftWidth: left.getBoundingClientRect().width,
+        imageCount: section.querySelectorAll('.service-route__mobile-media img').length,
+        horizontalOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       };
     });
 
-    expect(metrics.selectedBackground).not.toBe('rgba(0, 0, 0, 0)');
-    expect(metrics.horizontalOverflow).toBeLessThanOrEqual(1);
+    expect(layout.count).toBe(4);
+    expect(layout.imageCount).toBe(4);
+    expect(layout.horizontalOverflow).toBeLessThanOrEqual(1);
 
-    if (width >= 821) {
-      expect(metrics.tabHeight).toBeGreaterThan(300);
-      expect(metrics.tabHeight).toBeLessThan(900 * 0.72);
-      expect(metrics.panelWidth).toBeGreaterThan(metrics.introWidth);
-      expect(metrics.panelPosition).toBe('sticky');
-      expect(metrics.panelTop).toBeGreaterThanOrEqual(metrics.headerBottom + 8);
-    } else {
-      expect(metrics.tabHeight).toBeLessThanOrEqual(110);
-      expect(metrics.panelPosition).toBe('relative');
-      expect(metrics.visualTop).toBeLessThan(metrics.contentTop);
+    for (const route of await page.locator('#services .service-route').all()) {
+      await expect(route.locator('h3')).toHaveCount(1);
+      await expect(route.locator('.service-description')).toHaveCount(1);
+      await expect(route.locator('.service-route__jobs li')).toHaveCount(6);
+      await expect(route.locator('.service-route__focus strong')).toHaveCount(1);
+      await expect(route.locator('.service-route__action')).toHaveCount(1);
     }
 
-    await page.getByRole('tab', { name: /DTF Transfers/ }).click();
-    await expect(page.getByRole('tab', { name: /DTF Transfers/ })).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByRole('heading', { name: 'Sharp, repeatable transfer production.' })).toBeVisible();
+    if (width >= 861) {
+      expect(layout.panelDisplay).not.toBe('none');
+      expect(layout.panelPosition).toBe('sticky');
+      expect(layout.panelWidth).toBeGreaterThan(layout.leftWidth);
+      expect(layout.panelTop).toBeGreaterThanOrEqual(layout.headerBottom + 8);
+      for (const height of layout.routeHeights) {
+        expect(height).toBeGreaterThan(250);
+        expect(height).toBeLessThan(680);
+      }
+    } else {
+      expect(layout.panelDisplay).toBe('none');
+      await expect(page.locator('.service-route__mobile-media').first()).toBeVisible();
+    }
   }
 });
-
-test('production route details use warm paper with readable text on mobile and desktop', async ({ page }) => {
+test('route text has readable contrast on paper; production photograph is uninterrupted', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
-    await page.locator('#services').scrollIntoViewIfNeeded();
+    const routes = page.locator('#services .service-route');
+    await expect(routes).toHaveCount(4);
 
-    for (const tab of await page.getByRole('tab').all()) {
-      await tab.click();
-      await expect(tab).toHaveAttribute('aria-selected', 'true');
-
-      const panel = page.locator('#service-panel');
-      await expect(panel).toHaveCSS('background-color', 'rgb(233, 227, 217)');
-      await expect(panel).toHaveCSS('color', 'rgb(23, 23, 23)');
-      await expect(panel.locator('h3')).toHaveCSS('color', 'rgb(23, 23, 23)');
-      await expect(panel.locator('.service-description')).toHaveCSS('color', 'rgb(97, 92, 84)');
-      await expect(panel.locator('.micro-label').first()).toHaveCSS('color', 'rgb(97, 92, 84)');
-      await expect(panel.locator('.eyebrow')).toHaveCSS('color', 'rgb(163, 66, 19)');
-      await expect(panel.locator('.service-details li').first()).toHaveCSS('color', 'rgb(23, 23, 23)');
+    for (const route of await routes.all()) {
+      await expect(route.locator('h3')).toHaveCSS('color', 'rgb(23, 23, 23)');
+      await expect(route.locator('.service-description')).toHaveCSS('color', 'rgb(97, 92, 84)');
+      await expect(route.locator('.service-route__content .eyebrow')).toHaveCSS('color', 'rgb(163, 66, 19)');
     }
+
+    const stage = page.locator('#service-panel');
+    await expect(stage).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(stage.locator('.service-panel__content')).toHaveCount(0);
+    const scrim = await stage.locator('.service-panel__visual').evaluate(el => getComputedStyle(el, '::after').display);
+    expect(scrim).toBe('none');
+    if (width >= 861) await expect(stage).toBeVisible();
+    else await expect(stage).toBeHidden();
   }
 });
-
-test('sticky header stays solid while the production stage stays clear of it', async ({ page }) => {
+test('sticky header remains opaque above the desktop production photograph', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 
   for (const width of [390, 1440]) {
@@ -167,8 +179,8 @@ test('sticky header stays solid while the production stage stays clear of it', a
     await page.goto('/');
     await page.locator('#services').scrollIntoViewIfNeeded();
     await page.evaluate(() => {
-      const panel = document.querySelector('.service-panel')!;
-      window.scrollTo({ top: window.scrollY + panel.getBoundingClientRect().top + 180, behavior: 'instant' });
+      const route = document.querySelector('#services .service-route')!;
+      window.scrollTo({ top: window.scrollY + route.getBoundingClientRect().top + 160, behavior: 'instant' });
     });
 
     const result = await page.evaluate(() => {
@@ -177,20 +189,17 @@ test('sticky header stays solid while the production stage stays clear of it', a
       const headerBox = header.getBoundingClientRect();
       const panelBox = panel.getBoundingClientRect();
       const headerStyle = getComputedStyle(header);
-      const panelStyle = getComputedStyle(panel);
       const topElement = document.elementFromPoint(headerBox.left + headerBox.width / 2, headerBox.top + 8);
-
       return {
         scrollY: window.scrollY,
         headerTop: headerBox.top,
         headerBottom: headerBox.bottom,
         panelTop: panelBox.top,
+        panelPosition: getComputedStyle(panel).position,
+        panelDisplay: getComputedStyle(panel).display,
         headerPosition: headerStyle.position,
         headerBackground: headerStyle.backgroundColor,
-        headerBackdrop: headerStyle.backdropFilter,
         headerIsolation: headerStyle.isolation,
-        panelPosition: panelStyle.position,
-        panelIsolation: panelStyle.isolation,
         headerAtTop: Boolean(topElement?.closest('.site-header')),
       };
     });
@@ -199,44 +208,52 @@ test('sticky header stays solid while the production stage stays clear of it', a
     expect(result.headerPosition).toBe('sticky');
     expect(Math.abs(result.headerTop)).toBeLessThanOrEqual(1);
     expect(result.headerBackground).toBe('rgb(243, 239, 231)');
-    expect(result.headerBackdrop).toBe('none');
     expect(result.headerIsolation).toBe('isolate');
     expect(result.headerAtTop).toBe(true);
-    expect(result.panelIsolation).toBe('isolate');
 
-    if (width >= 821) {
+    if (width >= 861) {
+      expect(result.panelDisplay).not.toBe('none');
       expect(result.panelPosition).toBe('sticky');
       expect(result.panelTop).toBeGreaterThanOrEqual(result.headerBottom + 8);
     } else {
-      expect(result.panelPosition).toBe('relative');
+      expect(result.panelDisplay).toBe('none');
     }
   }
 
-  // The shared header must behave identically on interior pages.
   await page.goto('/work.html');
   await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
   const interiorHeader = page.locator('.site-header');
   await expect.poll(() => interiorHeader.evaluate(element => element.getBoundingClientRect().top)).toBe(0);
   await expect(interiorHeader).toHaveCSS('background-color', 'rgb(243, 239, 231)');
 });
-
-test('service route runway updates the pinned panel from scroll', async ({ page }) => {
+test('scrolling between editorial routes updates the pinned image', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await page.locator('#services').scrollIntoViewIfNeeded();
 
+  const routes = page.locator('#services .service-route');
   const tabs = page.getByRole('tab');
-  const secondTab = tabs.nth(1);
-  await secondTab.scrollIntoViewIfNeeded();
-  await expect(secondTab).toHaveAttribute('aria-selected', 'true');
-  await expect(page.locator('#service-panel')).toBeVisible();
-
+  const image = page.locator('#service-panel .service-panel__visual img');
+  for (const index of [1, 2, 3]) {
+    await routes.nth(index).evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      window.scrollTo({
+        top: window.scrollY + bounds.top - window.innerHeight * 0.32,
+        behavior: 'instant',
+      });
+    });
+    await expect(tabs.nth(index)).toHaveAttribute('aria-selected', 'true');
+    await expect(image).toHaveAttribute('alt', [
+      'Illustrative commercial brochure and print production example',
+      'Illustrative printed retail carton example',
+      'Illustrative DTF transfer production example',
+      'Illustrative custom production example',
+    ][index]);
+  }
   const headerBox = await page.locator('.site-header').boundingBox();
   const panelBox = await page.locator('#service-panel').boundingBox();
   expect(headerBox).not.toBeNull();
   expect(panelBox).not.toBeNull();
-  const headerBottom = headerBox!.y + headerBox!.height;
-  const panelTop = panelBox!.y;
-  expect(panelTop).toBeGreaterThanOrEqual(headerBottom - 2);
+  expect(panelBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 2);
 });
