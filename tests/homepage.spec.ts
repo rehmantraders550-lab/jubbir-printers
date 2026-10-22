@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('sculpted hero and masthead preserve legibility and alignment at five widths', async ({ page }) => {
+test('cinematic hero overlays readable text on the original machine poster at five widths', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
+
   for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
@@ -11,21 +12,34 @@ test('sculpted hero and masthead preserve legibility and alignment at five width
       const brand = rect('.site-header .brand');
       const cta = rect('.site-header .header-cta');
       const nav = document.querySelector('.site-header .desktop-nav')!;
-      const hero = rect('.hero--editorial .hero-grid');
-      const heroCopy = rect('.hero--editorial .hero-copy');
-      const photo = rect('.hero--editorial .hero-visual');
-      const h1 = document.querySelector('.hero--editorial h1')!;
-      const spans = Array.from(h1.querySelectorAll('.hero-title-line')).map(el => el.getBoundingClientRect().toJSON());
+      const hero = rect('.hero--cinematic .hero-grid');
+      const copy = rect('.hero--cinematic .hero-copy');
+      const visual = rect('.hero--cinematic .hero-visual');
+      const heading = document.querySelector('.hero--cinematic h1')!;
+      const spans = Array.from(heading.querySelectorAll('.hero-title-line')).map(el => el.getBoundingClientRect().toJSON());
+      const poster = document.querySelector('.hero-media-poster') as HTMLImageElement;
+      const video = document.querySelector('.hero-motion-video');
       return {
         screenWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
         header: rect('.site-header'),
-        brand, cta, hero, heroCopy, photo, spans,
+        brand,
+        cta,
+        hero,
+        copy,
+        visual,
+        spans,
         navDisplay: getComputedStyle(nav).display,
-        nav: nav.getBoundingClientRect().toJSON(),
-        brandImageWidth: rect('.site-header .brand-lockup__official').width,
-        imageLoaded: (document.querySelector('.hero--editorial .hero-visual > img') as HTMLImageElement).naturalWidth > 0,
-        heroFontSize: parseFloat(getComputedStyle(h1).fontSize),
+        navBox: nav.getBoundingClientRect().toJSON(),
+        imageLoaded: poster.complete && poster.naturalWidth > 0,
+        videoCount: document.querySelectorAll('.hero-motion-video').length,
+        photoPosition: getComputedStyle(document.querySelector('.hero--cinematic .hero-visual')!).position,
+        scrimBackground: getComputedStyle(document.querySelector('.hero--cinematic .hero-scrim')!).backgroundImage,
+        heroFontSize: parseFloat(getComputedStyle(heading).fontSize),
+        headlineColor: getComputedStyle(heading).color,
+        deskCount: document.querySelectorAll('.hero-desk-strip .desk-register li').length,
+        deskTop: rect('.hero-desk-strip').top,
+        videoVisible: video ? getComputedStyle(video).display !== 'none' : false,
       };
     });
 
@@ -33,8 +47,18 @@ test('sculpted hero and masthead preserve legibility and alignment at five width
     expect(metrics.cta.height).toBeGreaterThanOrEqual(44);
     expect(metrics.imageLoaded).toBe(true);
     expect(metrics.heroFontSize).toBeGreaterThanOrEqual(42);
+    expect(metrics.headlineColor).toBe('rgb(255, 255, 255)');
+    expect(metrics.photoPosition).toBe('absolute');
+    expect(metrics.scrimBackground).toContain('gradient');
+    expect(metrics.videoVisible).toBe(false);
+    expect(metrics.deskCount).toBe(5);
     expect(Math.abs(metrics.hero.x)).toBeLessThanOrEqual(1);
-    expect(Math.abs(metrics.photo.right - width)).toBeLessThanOrEqual(2);
+    expect(Math.abs(metrics.visual.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(metrics.visual.right - width)).toBeLessThanOrEqual(2);
+    expect(Math.abs(metrics.visual.y - metrics.hero.y)).toBeLessThanOrEqual(2);
+    expect(metrics.visual.bottom).toBeGreaterThanOrEqual(metrics.copy.bottom - 1);
+    expect(metrics.copy.y).toBeGreaterThanOrEqual(metrics.hero.y - 1);
+    expect(metrics.deskTop).toBeGreaterThanOrEqual(metrics.hero.bottom - 1);
 
     for (const span of metrics.spans) {
       expect(span.left).toBeGreaterThanOrEqual(-1);
@@ -43,20 +67,29 @@ test('sculpted hero and masthead preserve legibility and alignment at five width
 
     if (width <= 860) {
       expect(metrics.navDisplay).toBe('none');
-      expect(metrics.photo.top).toBeGreaterThanOrEqual(metrics.heroCopy.bottom - 2);
       expect(metrics.brand.right).toBeLessThan(metrics.cta.left);
       if (width <= 440) {
-        // The logo and action controls share one masthead row.
         expect(Math.abs((metrics.brand.top + metrics.brand.bottom) / 2 - (metrics.cta.top + metrics.cta.bottom) / 2)).toBeLessThanOrEqual(7);
         expect(metrics.header.height).toBeLessThan(105);
       }
     } else {
       expect(metrics.navDisplay).not.toBe('none');
-      expect(metrics.photo.top).toBe(metrics.heroCopy.top);
-      expect(metrics.nav.left).toBeGreaterThanOrEqual(metrics.brand.right - 1);
-      expect(metrics.cta.left).toBeGreaterThanOrEqual(metrics.nav.right - 1);
+      expect(metrics.navBox.left).toBeGreaterThanOrEqual(metrics.brand.right - 1);
+      expect(metrics.cta.left).toBeGreaterThanOrEqual(metrics.navBox.right - 1);
     }
   }
+});
+
+test('hero video fallback retains accessible headline and both calls to action', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Printing made straightforward.' })).toBeVisible();
+  await expect(page.locator('.hero-lead')).toContainText('Send your specification, quantity and artwork.');
+  await expect(page.locator('.hero-motion-video')).toHaveCount(0);
+  await expect(page.locator('.hero-media-poster')).toBeVisible();
+  await page.locator('.hero-actions').getByRole('button', { name: /Start a Job/ }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
 });
 
 test('overview links open their existing detail pages', async ({ page }) => {

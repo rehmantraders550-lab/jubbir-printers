@@ -24,7 +24,11 @@ test('small controls and light-surface labels have readable contrast', async ({ 
   const colors = await page.evaluate(() => {
     const paper = getComputedStyle(document.body).backgroundColor;
     return ['.hero .eyebrow', '.service-tabs button:not(.is-active)', '.capability-number', '.artwork-register article > span', '.process-number'].map(selector => ({
-      selector, foreground: getComputedStyle(document.querySelector(selector)!).color, background: paper,
+      selector,
+      foreground: getComputedStyle(document.querySelector(selector)!).color,
+      // The cinematic hero has its own dark media + contrast scrim, not the body's ivory paper.
+      // Use a conservative charcoal proxy for its background rather than testing against ivory.
+      background: selector === '.hero .eyebrow' ? 'rgb(38, 42, 43)' : paper,
     }));
   });
   for (const color of colors) expect(contrast(color.foreground, color.background), color.selector).toBeGreaterThanOrEqual(4.5);
@@ -174,8 +178,9 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
         expect(line.x).toBeGreaterThanOrEqual(0);
         expect(line.right).toBeLessThanOrEqual(width + 1);
       }
-      if (width <= 860) expect(layout.visual.y).toBeGreaterThanOrEqual(layout.copy.bottom - 1);
-      else expect(layout.visual.y).toBe(layout.copy.y);
+      // The cinematic machine media now fills the hero while headline/CTA sit above it.
+      expect(layout.visual.y).toBeLessThanOrEqual(layout.copy.y + 1);
+      expect(layout.visual.bottom).toBeGreaterThanOrEqual(layout.copy.bottom - 1);
       await expect(page.locator('.desk-register li')).toHaveCount(5);
       const productImages = await page.locator('.home-product-card img').evaluateAll(images => images.map(image => (image as HTMLImageElement).src));
       expect(productImages).toHaveLength(8);
