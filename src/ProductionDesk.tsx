@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, ChevronRight, Menu, X } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { JobDrawer } from './JobDrawer';
@@ -51,11 +51,11 @@ export default function ProductionDesk() {
   const serviceTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const serviceRouteRefs = useRef<Array<HTMLDivElement | null>>([]);
   const manualSelectionUntil = useRef(0);
-  const heroRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroImageScale = useTransform(heroProgress, [0, 1], [1, 1.075]);
-  const heroCopyShift = useTransform(heroProgress, [0, 1], [0, -28]);
+  // Empty until the owner approves an actual source-faithful Google Flow export.
+  // There is never a request for a missing video or a paid video-hosting dependency.
+  const heroVideoUrl = (import.meta.env.VITE_JUBBIR_HERO_VIDEO_URL ?? '').trim();
+  const [heroVideoPlaying, setHeroVideoPlaying] = useState(false);
   const headerBarRef = useHeaderOffset();
   const active = useMemo(() => services[activeService], [activeService]);
 
@@ -179,61 +179,111 @@ export default function ProductionDesk() {
       </header>
 
       <main id="main-content">
-        <section id="top" className="hero hero--editorial" ref={heroRef}>
+        <section id="top" className="hero hero--editorial hero--cinematic">
           <div className="hero-grid">
-            <motion.div
-              className="hero-copy"
-              style={{ y: reduceMotion ? 0 : heroCopyShift }}
-              initial={{ opacity: 0, y: reduceMotion ? 0 : 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.55 }}
-            >
-              <p className="eyebrow">Commercial Print / Packaging / DTF / Custom Production</p>
+            <div className="hero-visual">
+              <img
+                className="hero-media-poster"
+                src={heroImage}
+                alt="Commercial offset press producing full-colour printed sheets"
+                fetchPriority="high"
+                decoding="async"
+              />
+              {heroVideoUrl && !reduceMotion && (
+                <video
+                  className={heroVideoPlaying ? 'hero-motion-video is-playing' : 'hero-motion-video'}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  poster={heroImage}
+                  aria-hidden="true"
+                  onPlaying={() => setHeroVideoPlaying(true)}
+                  onPause={() => setHeroVideoPlaying(false)}
+                  onError={() => setHeroVideoPlaying(false)}
+                >
+                  <source src={heroVideoUrl} type="video/mp4" />
+                </video>
+              )}
+              <div className="hero-scrim" aria-hidden="true" />
+              <div className="hero-image-caption" aria-hidden="true">
+                <span>01 / MATERIAL INTO FORM</span>
+                <span>PRINTING · FINISHING · PRODUCTION</span>
+              </div>
+            </div>
+
+            <div className="hero-copy">
+              <motion.p
+                className="eyebrow"
+                initial={{ opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 9 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.5, delay: reduceMotion ? 0 : 0.1 }}
+              >
+                Commercial Print / Packaging / DTF / Custom Production
+              </motion.p>
               <h1 className="hero-title" aria-label="Printing made straightforward.">
-                <span className="hero-title-line">Printing</span>
-                <span className="hero-title-line hero-title-line--accent">made</span>
-                <span className="hero-title-line hero-title-line--long">straightforward.</span>
+                <motion.span
+                  className="hero-title-line"
+                  initial={{ opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.6, delay: reduceMotion ? 0 : 0.15 }}
+                >Printing</motion.span>
+                <motion.span
+                  className="hero-title-line hero-title-line--accent"
+                  initial={{ opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.6, delay: reduceMotion ? 0 : 0.36 }}
+                >made</motion.span>
+                <motion.span
+                  className="hero-title-line hero-title-line--long"
+                  initial={{ opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.6, delay: reduceMotion ? 0 : 0.57 }}
+                >straightforward.</motion.span>
               </h1>
-              <p className="hero-lead">
+              <motion.p
+                className="hero-lead"
+                initial={{ opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.55, delay: reduceMotion ? 0 : 0.8 }}
+              >
                 Send your specification, quantity and artwork. We review the job, define the production route and move it forward from one desk.
-              </p>
-              <div className="hero-actions">
+              </motion.p>
+              <motion.div
+                className="hero-actions"
+                initial={{ opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.5, delay: reduceMotion ? 0 : 1.05 }}
+              >
                 <button type="button" className="button button--accent" onClick={openDrawer}>
                   Start a Job <ArrowRight aria-hidden="true" />
                 </button>
                 <a className="button button--outline" href="#process">
                   How it works <ChevronRight aria-hidden="true" />
                 </a>
-              </div>
-            </motion.div>
-
-            <div className="hero-visual">
-              <motion.img
-                style={{ scale: reduceMotion ? 1 : heroImageScale }}
-                src={heroImage}
-                alt="Commercial offset press producing full-colour printed sheets"
-                fetchPriority="high"
-                decoding="async"
-              />
-              <div className="hero-scrim" aria-hidden="true" />
-              <div className="hero-image-caption" aria-hidden="true"><span>01 / MATERIAL INTO FORM</span><span>PRINTING · FINISHING · PRODUCTION</span></div>
-              <div className="desk-register" aria-label="Production desk stages">
-                <div className="desk-register__head">
-                  <span>Production Desk</span>
-                  <span>JOB / 01</span>
-                </div>
-                <ol>
-                  {deskStages.map((stage, index) => (
-                    <li key={stage}>
-                      <span>0{index + 1}</span>
-                      <strong>{stage}</strong>
-                    </li>
-                  ))}
-                </ol>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
+        <div className="hero-desk-strip">
+          <div className="site-wrap">
+            <div className="desk-register" aria-label="Production desk stages">
+              <div className="desk-register__head">
+                <span>Production Desk</span>
+                <span>JOB / 01</span>
+              </div>
+              <ol>
+                {deskStages.map((stage, index) => (
+                  <li key={stage}>
+                    <span>0{index + 1}</span>
+                    <strong>{stage}</strong>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </div>
 
         <section className="home-product-register" aria-label="Common production products">
           <div className="site-wrap home-product-register__grid">
