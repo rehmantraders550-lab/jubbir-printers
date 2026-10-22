@@ -1,6 +1,6 @@
 # Jubbir Printers | Machine Video Hero Contract
 
-Status: VIDEO PROVIDED / OPTIMIZED 720P REPO ASSET INSTALLED / AWAITING RELEASE VALIDATION
+Status: RELEASED / MAIN MERGED / AUTOMATED CI AND GITHUB PAGES DEPLOY SUCCESSFUL / INDEPENDENT LIVE-PLAYBACK AND CLIENT ACCEPTANCE OPEN
 Approved concept: one exact offset press as full-viewport background, existing website text over the moving footage, quiet entry sequence.
 Date: 2026-10-22
 
@@ -20,14 +20,14 @@ Date: 2026-10-22
 - No paid video hosting. Keep the file as a local static website asset unless the user explicitly approves a different storage plan.
 - No deletion or overwrite of original machine photo.
 
-## Implementation staged on branch
+## Implementation in production source
 
 - `src/ProductionDesk.tsx`: approved local video is enabled by default, except when reduced-motion or data-saver preferences are active; original photo poster is always mounted.
 - `src/index.css`: media covers the hero under the sticky header; real accessible DOM text, strong CSS contrast zone, staged copy/CTA reveal and responsive cropping.
 - `tests/homepage.spec.ts`, `tests/intake.spec.ts`: validate geometry, poster fallback, heading readability, functional job-intake CTA and all existing responsive checks.
 - Production Desk step register is retained and placed beneath the hero to keep moving machinery unobstructed.
 
-## Release gate
+## Release gate (retained contract)
 
 1. User supplied the original Veo output. Initial inspection found usable industrial motion; not a technically certified demonstration. Source retained, 720p deployment encoding created for economical delivery.
 2. Check optimized codec, size, loaded playback, silent autoplay/muted/playsInline/loop, and no 404s.
@@ -39,3 +39,16 @@ Date: 2026-10-22
 ## Prompt design rules
 
 Specify an exact first-frame replica, stationary camera, original rollers rotating around their actual axes, printed sheets moving at a mechanically plausible constant rate, original printed artworks unchanged, steady daylight industrial lighting, no text overlays, no invented geometry. Keep website typography out of the generated video so text stays readable, accessible and responsive.
+
+## Release closeout 2026-10-22
+
+- PR #37 merged into `main`: `ccc549b05451d1cc485f47337965ee694119299e`.
+- Final branch CI: `https://github.com/rehmantraders550-lab/jubbir-printers/actions/runs/39819623585` (20 browser tests passed).
+- Post-merge CI: `https://github.com/rehmantraders550-lab/jubbir-printers/actions/runs/39819984251` (success).
+- Production publisher: `https://github.com/rehmantraders550-lab/jubbir-printers/actions/runs/39819984194` (success).
+- Pages: `https://github.com/rehmantraders550-lab/jubbir-printers/actions/runs/39820040424` (success).
+- Direct external domain verification was not possible in the audit environment; client visual acceptance is open. These are distinct gates.
+- `jubbir-machine-hero-poster.jpg` is archived in `public/media/`; browser `<video poster>` currently references `heroImage` (the preserved original `src/assets/images/jubbir-hero-v2.webp`). Do not claim that new poster file is actively referenced.
+- User's Flow generation consumed 100 existing credits; no *additional* paid hosting was activated. Exact equivalent PKR cost and model tier of the run are not independently verified. Credit spend must be preflighted, not inferred.
+- Reusable facts, file SHA-256s, boundaries and client handover are in `.orvia/JUBBIR_CINEMATIC_HERO_CLOSEOUT_2026-10-22.md`.
+- Documentation-only change: do not imply a change to the deployed video or to website design.
