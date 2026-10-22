@@ -83,6 +83,58 @@ test('service tabs update the illustrative visual stage with keyboard and touch 
   }
 });
 
+test('production routes have a compact runway and balanced responsive detail stage', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+
+  for (const width of [390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    await page.locator('#services').scrollIntoViewIfNeeded();
+
+    const metrics = await page.evaluate(() => {
+      const tab = document.querySelector('.service-tabs > button')!;
+      const active = document.querySelector('.service-tabs > button.is-active')!;
+      const intro = document.querySelector('.service-intro')!;
+      const panel = document.querySelector('.service-panel')!;
+      const visual = document.querySelector('.service-panel__visual')!;
+      const content = document.querySelector('.service-panel__content')!;
+      const tabBox = tab.getBoundingClientRect();
+      const panelBox = panel.getBoundingClientRect();
+      return {
+        tabHeight: tabBox.height,
+        introWidth: intro.getBoundingClientRect().width,
+        panelWidth: panelBox.width,
+        panelTop: panelBox.top,
+        headerBottom: document.querySelector('.site-header')!.getBoundingClientRect().bottom,
+        panelPosition: getComputedStyle(panel).position,
+        selectedBackground: getComputedStyle(active).backgroundColor,
+        visualTop: visual.getBoundingClientRect().top,
+        contentTop: content.getBoundingClientRect().top,
+        horizontalOverflow: panel.scrollWidth - panel.clientWidth,
+      };
+    });
+
+    expect(metrics.selectedBackground).not.toBe('rgba(0, 0, 0, 0)');
+    expect(metrics.horizontalOverflow).toBeLessThanOrEqual(1);
+
+    if (width >= 821) {
+      expect(metrics.tabHeight).toBeGreaterThan(300);
+      expect(metrics.tabHeight).toBeLessThan(900 * 0.72);
+      expect(metrics.panelWidth).toBeGreaterThan(metrics.introWidth);
+      expect(metrics.panelPosition).toBe('sticky');
+      expect(metrics.panelTop).toBeGreaterThanOrEqual(metrics.headerBottom + 8);
+    } else {
+      expect(metrics.tabHeight).toBeLessThanOrEqual(110);
+      expect(metrics.panelPosition).toBe('relative');
+      expect(metrics.visualTop).toBeLessThan(metrics.contentTop);
+    }
+
+    await page.getByRole('tab', { name: /DTF Transfers/ }).click();
+    await expect(page.getByRole('tab', { name: /DTF Transfers/ })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('heading', { name: 'Sharp, repeatable transfer production.' })).toBeVisible();
+  }
+});
+
 test('sticky header stays solid while the production stage stays clear of it', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 
