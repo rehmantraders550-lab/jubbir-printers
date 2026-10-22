@@ -1,5 +1,64 @@
 import { expect, test } from '@playwright/test';
 
+test('sculpted hero and masthead preserve legibility and alignment at five widths', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const width of [320, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+
+    const metrics = await page.evaluate(() => {
+      const rect = (selector: string) => document.querySelector(selector)!.getBoundingClientRect().toJSON();
+      const brand = rect('.site-header .brand');
+      const cta = rect('.site-header .header-cta');
+      const nav = document.querySelector('.site-header .desktop-nav')!;
+      const hero = rect('.hero--editorial .hero-grid');
+      const heroCopy = rect('.hero--editorial .hero-copy');
+      const photo = rect('.hero--editorial .hero-visual');
+      const h1 = document.querySelector('.hero--editorial h1')!;
+      const spans = Array.from(h1.querySelectorAll('.hero-title-line')).map(el => el.getBoundingClientRect().toJSON());
+      return {
+        screenWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        header: rect('.site-header'),
+        brand, cta, hero, heroCopy, photo, spans,
+        navDisplay: getComputedStyle(nav).display,
+        nav: nav.getBoundingClientRect().toJSON(),
+        brandImageWidth: rect('.site-header .brand-lockup__official').width,
+        imageLoaded: (document.querySelector('.hero--editorial .hero-visual > img') as HTMLImageElement).naturalWidth > 0,
+        heroFontSize: parseFloat(getComputedStyle(h1).fontSize),
+      };
+    });
+
+    expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.screenWidth);
+    expect(metrics.cta.height).toBeGreaterThanOrEqual(44);
+    expect(metrics.imageLoaded).toBe(true);
+    expect(metrics.heroFontSize).toBeGreaterThanOrEqual(42);
+    expect(Math.abs(metrics.hero.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(metrics.photo.right - width)).toBeLessThanOrEqual(2);
+
+    for (const span of metrics.spans) {
+      expect(span.left).toBeGreaterThanOrEqual(-1);
+      expect(span.right).toBeLessThanOrEqual(width + 1);
+    }
+
+    if (width <= 860) {
+      expect(metrics.navDisplay).toBe('none');
+      expect(metrics.photo.top).toBeGreaterThanOrEqual(metrics.heroCopy.bottom - 2);
+      expect(metrics.brand.right).toBeLessThan(metrics.cta.left);
+      if (width <= 440) {
+        // The logo and action controls share one masthead row.
+        expect(Math.abs((metrics.brand.top + metrics.brand.bottom) / 2 - (metrics.cta.top + metrics.cta.bottom) / 2)).toBeLessThanOrEqual(7);
+        expect(metrics.header.height).toBeLessThan(105);
+      }
+    } else {
+      expect(metrics.navDisplay).not.toBe('none');
+      expect(metrics.photo.top).toBe(metrics.heroCopy.top);
+      expect(metrics.nav.left).toBeGreaterThanOrEqual(metrics.brand.right - 1);
+      expect(metrics.cta.left).toBeGreaterThanOrEqual(metrics.nav.right - 1);
+    }
+  }
+});
+
 test('overview links open their existing detail pages', async ({ page }) => {
   const cases = [
     ['#capabilities .section-detail-link', 'capabilities.html', 'Production decisions made visible.'],
