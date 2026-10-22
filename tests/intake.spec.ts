@@ -183,7 +183,8 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
       // Preload stable page images before taking a full-page screenshot.
       // The sticky stage crossfades between different <img> nodes as we scroll;
       // its dynamic image is verified separately by the production route tests.
-      for (const img of await page.locator('img:not(#service-panel img)').all()) {
+      // Ignore the deliberately hidden mobile copies at desktop widths.
+      for (const img of await page.locator('img:not(#service-panel img):visible').all()) {
         await img.scrollIntoViewIfNeeded();
         await expect.poll(() => img.evaluate(element => (element as HTMLImageElement).complete && (element as HTMLImageElement).naturalWidth > 0)).toBe(true);
       }
