@@ -104,8 +104,8 @@ export function InteriorShell({ children, current }: InteriorShellProps) {
                 <strong>Amjad Rubbani</strong>
                 <span className="footer-contact-number">0300 888 6888</span>
               </a>
-              <a className="footer-contact-link" href="tel:+923088999988" aria-label="Call Ali Hamza, workflow head, at 0308 899 9988">
-                <span className="footer-contact-role">Workflow Head</span>
+              <a className="footer-contact-link" href="tel:+923088999988" aria-label="Call Ali Hamza, production head, at 0308 899 9988">
+                <span className="footer-contact-role">Production Head</span>
                 <strong>Ali Hamza</strong>
                 <span className="footer-contact-number">0308 899 9988</span>
               </a>
