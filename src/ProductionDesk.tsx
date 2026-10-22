@@ -49,6 +49,7 @@ export default function ProductionDesk() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const serviceTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const manualSelectionUntil = useRef(0);
   const heroRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -61,16 +62,28 @@ export default function ProductionDesk() {
     const tabs = serviceTabRefs.current.filter((tab): tab is HTMLButtonElement => Boolean(tab));
     if (!tabs.length || typeof IntersectionObserver === 'undefined') return;
 
+    // The shorter runway selects the route nearest the reading line, not
+    // merely the last IntersectionObserver threshold to fire.
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!visible) return;
-        const index = tabs.indexOf(visible.target as HTMLButtonElement);
-        if (index >= 0) setActiveService(serviceOrder[index]);
+        // Focus and click may move the page; do not override an explicit choice.
+        if (Date.now() < manualSelectionUntil.current) return;
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        const readingLine = window.innerHeight * 0.45;
+        const nearest = tabs
+          .map((tab, index) => {
+            const bounds = tab.getBoundingClientRect();
+            return {
+              index,
+              visible: bounds.bottom > 0 && bounds.top < window.innerHeight,
+              distance: Math.abs((bounds.top + bounds.bottom) / 2 - readingLine),
+            };
+          })
+          .filter((item) => item.visible)
+          .sort((a, b) => a.distance - b.distance)[0];
+        if (nearest) setActiveService(serviceOrder[nearest.index]);
       },
-      { rootMargin: '-38% 0px -38% 0px', threshold: [0, 0.35, 0.7, 1] },
+      { rootMargin: '-25% 0px -35% 0px', threshold: [0, 0.25, 0.6, 1] },
     );
 
     tabs.forEach((tab) => observer.observe(tab));
@@ -84,6 +97,11 @@ export default function ProductionDesk() {
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
+  const selectService = (key: ServiceKey) => {
+    manualSelectionUntil.current = Date.now() + 1200;
+    setActiveService(key);
+  };
+
   const handleServiceKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     let nextIndex = index;
 
@@ -95,7 +113,7 @@ export default function ProductionDesk() {
 
     event.preventDefault();
     const nextKey = serviceOrder[nextIndex];
-    setActiveService(nextKey);
+    selectService(nextKey);
     serviceTabRefs.current[nextIndex]?.focus();
   };
 
@@ -250,7 +268,7 @@ export default function ProductionDesk() {
                     aria-controls="service-panel"
                     tabIndex={activeService === key ? 0 : -1}
                     className={activeService === key ? 'is-active' : ''}
-                    onClick={() => setActiveService(key)}
+                    onClick={() => selectService(key)}
                     onKeyDown={(event) => handleServiceKeyDown(event, index)}
                   >
                     <span><small>0{index + 1}</small>{services[key].label}</span>
