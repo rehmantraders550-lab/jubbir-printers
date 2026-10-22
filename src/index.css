@@ -3323,3 +3323,305 @@ img {
     font-size: clamp(42px, 11.45vw, 51px);
   }
 }
+
+
+/* JUBBIR CINEMATIC HERO PREPARATION
+   Media is a full-viewport layer; accessible real text is composited above it.
+   The original image stays available even when video is missing/blocked.
+   The production stage register is repositioned below, never over the machinery. */
+.production-desk-home .hero--cinematic {
+  padding: 0;
+  border-bottom: 0;
+  background: #141817;
+}
+
+.production-desk-home .hero--cinematic .hero-grid {
+  position: relative;
+  display: grid;
+  width: 100%;
+  max-width: none;
+  min-height: max(660px, calc(100svh - var(--header-offset, 94px)));
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  align-items: center;
+  overflow: hidden;
+}
+
+.production-desk-home .hero--cinematic .hero-visual {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #151718;
+}
+
+.production-desk-home .hero--cinematic .hero-media-poster,
+.production-desk-home .hero--cinematic .hero-motion-video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.production-desk-home .hero--cinematic .hero-media-poster {
+  z-index: 0;
+}
+
+.production-desk-home .hero--cinematic .hero-motion-video {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.production-desk-home .hero--cinematic .hero-motion-video.is-playing {
+  opacity: 1;
+}
+
+/* Contrast protection is CSS, not baked into the Google Flow footage. */
+.production-desk-home .hero--cinematic .hero-scrim {
+  z-index: 2;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(9 13 16 / 88%) 0%,
+      rgb(9 13 16 / 82%) 24%,
+      rgb(9 13 16 / 62%) 49%,
+      rgb(9 13 16 / 21%) 83%,
+      rgb(9 13 16 / 11%) 100%
+    ),
+    linear-gradient(0deg, rgb(9 13 16 / 32%), transparent 28%);
+  pointer-events: none;
+}
+
+.production-desk-home .hero--cinematic .hero-copy {
+  position: relative;
+  z-index: 3;
+  grid-column: 1;
+  min-width: 0;
+  width: min(850px, 100%);
+  min-height: 0;
+  padding:
+    clamp(76px, 8vw, 140px)
+    clamp(24px, 6vw, 96px)
+    clamp(92px, 9vw, 145px)
+    var(--page-gutter);
+  color: #fff;
+  align-self: center;
+  justify-content: center;
+}
+
+.production-desk-home .hero--cinematic .hero-copy > .eyebrow {
+  max-width: 48ch;
+  color: #ffc39b;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.75;
+  letter-spacing: .12em;
+}
+
+.production-desk-home .hero--cinematic h1 {
+  max-width: 100%;
+  margin: clamp(22px, 3vw, 38px) 0 clamp(22px, 2.9vw, 35px);
+  color: #fff;
+  font-size: clamp(56px, 7.3vw, 107px);
+  line-height: .92;
+  letter-spacing: -.054em;
+  text-shadow: 0 2px 22px rgb(0 0 0 / 15%);
+}
+
+.production-desk-home .hero--cinematic .hero-title-line {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.production-desk-home .hero--cinematic .hero-title-line--accent {
+  color: #ff843d;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.production-desk-home .hero--cinematic .hero-title-line--long {
+  font-size: .77em;
+  letter-spacing: -.068em;
+}
+
+.production-desk-home .hero--cinematic .hero-lead {
+  max-width: 53ch;
+  color: #f0eee8;
+  font-size: clamp(15px, 1.18vw, 17px);
+  line-height: 1.7;
+}
+
+.production-desk-home .hero--cinematic .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(22px, 2.7vw, 36px);
+}
+
+.production-desk-home .hero--cinematic .hero-actions .button {
+  min-height: 50px;
+  border-radius: 12px;
+}
+
+.production-desk-home .hero--cinematic .hero-actions .button--outline {
+  border-color: rgb(255 255 255 / 72%);
+  color: #fff;
+  background: rgb(10 10 10 / 12%);
+}
+
+.production-desk-home .hero--cinematic .hero-actions .button--outline:hover {
+  border-color: #fff;
+  background: #fff;
+  color: #171717;
+}
+
+/* Ancillary technical caption is kept outside the text reading zone. */
+.production-desk-home .hero--cinematic .hero-image-caption {
+  position: absolute;
+  z-index: 3;
+  top: auto;
+  left: auto;
+  right: clamp(16px, 3vw, 46px);
+  bottom: clamp(18px, 2.8vw, 40px);
+  display: grid;
+  gap: 6px;
+  text-align: right;
+  justify-items: end;
+  color: #fff;
+  font-size: 9px;
+  text-shadow: 0 1px 8px #000b;
+  pointer-events: none;
+}
+
+/* The full five-step production register lives after the immersive hero. */
+.production-desk-home .hero-desk-strip {
+  background: var(--paper);
+  padding: clamp(14px, 2.1vw, 30px) 0;
+}
+
+.production-desk-home .hero-desk-strip .desk-register {
+  position: relative;
+  inset: auto;
+  display: grid;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  grid-template-columns: minmax(170px, .27fr) minmax(0, 1fr);
+  align-items: stretch;
+  border: 0;
+  border-radius: 11px;
+  background: #1d1d1d;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.production-desk-home .hero-desk-strip .desk-register__head {
+  display: grid;
+  gap: 7px;
+  align-content: center;
+  justify-content: start;
+  border: 0;
+  padding: 16px 20px;
+}
+
+.production-desk-home .hero-desk-strip .desk-register ol {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.production-desk-home .hero-desk-strip .desk-register li {
+  min-width: 0;
+  padding: 18px 12px;
+}
+
+@media (max-width: 860px) {
+  .production-desk-home .hero--cinematic .hero-grid {
+    min-height: max(690px, calc(100svh - var(--header-offset, 86px)));
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .production-desk-home .hero--cinematic .hero-copy {
+    min-height: 0;
+    width: min(760px, 100%);
+    padding: 76px var(--page-gutter) 104px;
+  }
+  .production-desk-home .hero--cinematic h1 {
+    font-size: clamp(52px, 9.2vw, 78px);
+  }
+  .production-desk-home .hero--cinematic .hero-scrim {
+    background: linear-gradient(
+      90deg,
+      rgb(9 13 16 / 90%) 0%,
+      rgb(9 13 16 / 72%) 58%,
+      rgb(9 13 16 / 35%) 100%
+    );
+  }
+  .production-desk-home .hero-desk-strip .desk-register {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .production-desk-home .hero-desk-strip .desk-register__head {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 620px) {
+  .production-desk-home .hero--cinematic .hero-grid {
+    min-height: max(700px, calc(100svh - var(--header-offset, 79px)));
+  }
+  .production-desk-home .hero--cinematic .hero-copy {
+    padding: 58px var(--page-gutter) 96px;
+  }
+  .production-desk-home .hero--cinematic h1 {
+    font-size: clamp(44px, 11.5vw, 62px);
+    line-height: .96;
+  }
+  .production-desk-home .hero--cinematic .hero-title-line {
+    width: auto;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .production-desk-home .hero--cinematic .hero-title-line--long {
+    font-size: .79em;
+  }
+  .production-desk-home .hero--cinematic .hero-visual {
+    min-height: 0;
+  }
+  .production-desk-home .hero--cinematic .hero-media-poster,
+  .production-desk-home .hero--cinematic .hero-motion-video {
+    object-position: 56% center;
+  }
+  .production-desk-home .hero--cinematic .hero-scrim {
+    background: linear-gradient(
+      180deg,
+      rgb(9 13 16 / 72%) 0%,
+      rgb(9 13 16 / 82%) 58%,
+      rgb(9 13 16 / 60%) 100%
+    );
+  }
+  .production-desk-home .hero--cinematic .hero-image-caption {
+    display: none;
+  }
+  .production-desk-home .hero-desk-strip .desk-register ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .production-desk-home .hero--cinematic .hero-motion-video {
+    display: none;
+    transition: none;
+  }
+}
