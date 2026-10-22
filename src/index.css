@@ -3060,3 +3060,266 @@ img {
     transition: none !important;
   }
 }
+
+/* JUBBIR | APPROVED HERO + MASTHEAD SCULPTING, OCT 2026
+   Strong material photography, deliberate typography and one-row mobile masthead.
+   Source content, official logo and functionality are intentionally unchanged. */
+
+/* The masthead has three clear zones on desktop and retains its fixed height. */
+.site-header {
+  border-bottom-color: rgb(23 23 23 / 10%);
+  box-shadow: 0 7px 24px rgb(23 23 23 / 5%);
+}
+
+.site-header .header-inner {
+  display: grid;
+  min-height: 94px;
+  grid-template-columns: minmax(82px, 1fr) auto minmax(145px, 1fr);
+  align-items: center;
+  column-gap: clamp(12px, 1.8vw, 32px);
+}
+
+.site-header .brand {
+  justify-self: start;
+  min-width: 0;
+}
+
+.site-header .brand-lockup__official {
+  width: clamp(62px, 5.2vw, 74px);
+  height: auto;
+}
+
+.site-header .desktop-nav {
+  justify-self: center;
+  min-width: 0;
+  gap: clamp(10px, 1.3vw, 24px);
+}
+
+.site-header .desktop-nav a {
+  color: #514e48;
+  font-size: clamp(10px, .77vw, 11px);
+  font-weight: 800;
+  letter-spacing: .095em;
+}
+
+.site-header .desktop-nav a::after {
+  content: none;
+}
+
+.site-header .desktop-nav a:hover,
+.site-header .desktop-nav a:focus-visible,
+.site-header .desktop-nav a[aria-current="page"] {
+  color: #a34213;
+}
+
+.site-header .header-actions {
+  justify-self: end;
+  margin-left: 0;
+}
+
+.site-header .header-cta {
+  min-height: 46px;
+  padding: 11px 15px;
+  border-radius: 12px;
+  font-size: 12px;
+  gap: 8px;
+}
+
+/* Grand editorial split: warm copy and production photography meet edge to edge. */
+.production-desk-home .hero--editorial {
+  padding: 0;
+  border-bottom: 0;
+}
+
+.production-desk-home .hero--editorial .hero-grid {
+  width: 100%;
+  max-width: none;
+  min-height: clamp(680px, 82svh, 960px);
+  margin: 0;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
+  gap: 0;
+}
+
+.production-desk-home .hero--editorial .hero-copy {
+  min-width: 0;
+  padding: clamp(55px, 6.3vw, 110px)
+           clamp(24px, 4vw, 70px)
+           clamp(58px, 6.3vw, 110px)
+           max(var(--page-gutter), calc((100vw - 1440px) / 2 + var(--page-gutter)));
+}
+
+.production-desk-home .hero--editorial .hero-copy > .eyebrow {
+  max-width: 48ch;
+  color: #a34213;
+  font-size: 11px;
+  letter-spacing: .12em;
+  line-height: 1.7;
+}
+
+.production-desk-home .hero--editorial h1 {
+  width: 100%;
+  max-width: 100%;
+  margin: clamp(22px, 3vw, 44px) 0 clamp(23px, 3vw, 42px);
+  font-size: clamp(64px, 6.85vw, 106px);
+  line-height: .9;
+  letter-spacing: -.056em;
+}
+
+.production-desk-home .hero--editorial .hero-title-line {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.production-desk-home .hero--editorial .hero-title-line--accent {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.production-desk-home .hero--editorial .hero-title-line--long {
+  font-size: .77em;
+  letter-spacing: -.064em;
+}
+
+.production-desk-home .hero--editorial .hero-lead {
+  max-width: 54ch;
+  color: #615c54;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.67;
+}
+
+.production-desk-home .hero--editorial .hero-actions {
+  gap: 12px;
+  margin-top: clamp(26px, 3vw, 40px);
+}
+
+.production-desk-home .hero--editorial .hero-actions .button {
+  min-height: 52px;
+  padding: 15px 23px;
+  border-radius: 12px;
+}
+
+.production-desk-home .hero--editorial .hero-visual {
+  min-width: 0;
+  min-height: 100%;
+  border-radius: 0;
+}
+
+.production-desk-home .hero--editorial .hero-visual > img {
+  object-position: 52% center;
+}
+
+.production-desk-home .hero--editorial .hero-scrim {
+  background: linear-gradient(180deg, rgb(0 0 0 / 13%) 0%, transparent 34%, rgb(0 0 0 / 69%) 100%);
+}
+
+/* A quiet, credible production register, not a floating glass gadget. */
+.production-desk-home .hero--editorial .desk-register {
+  max-width: 490px;
+  border-radius: 11px;
+  background: rgb(20 20 20 / 92%);
+  backdrop-filter: none;
+  box-shadow: 0 14px 35px rgb(0 0 0 / 13%);
+}
+
+@media (max-width: 860px) {
+  .site-header .header-inner {
+    min-height: 86px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  .site-header .desktop-nav {
+    display: none;
+  }
+  .site-header .header-actions {
+    grid-column: 2;
+  }
+  .site-header .menu-button {
+    display: grid;
+    width: 44px;
+    height: 44px;
+  }
+  .site-header .brand-lockup__official {
+    width: 63px;
+  }
+  .production-desk-home .hero--editorial .hero-grid {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .production-desk-home .hero--editorial .hero-copy {
+    min-height: 0;
+    padding: clamp(44px, 7vw, 80px) var(--page-gutter) clamp(50px, 7vw, 80px);
+  }
+  .production-desk-home .hero--editorial h1 {
+    font-size: clamp(60px, 10vw, 86px);
+  }
+  .production-desk-home .hero--editorial .hero-visual {
+    min-height: clamp(430px, 72vw, 620px);
+  }
+}
+
+@media (max-width: 620px) {
+  .site-header .header-inner {
+    min-height: 79px;
+  }
+  .site-header .brand-lockup__official {
+    width: 59px;
+  }
+  .site-header .header-cta {
+    min-height: 44px;
+    padding: 11px 12px;
+    font-size: 12px;
+  }
+  .production-desk-home .hero--editorial .hero-copy {
+    padding: 44px var(--page-gutter) 50px;
+  }
+  .production-desk-home .hero--editorial h1 {
+    font-size: clamp(44px, 11.5vw, 65px);
+    line-height: .93;
+  }
+  .production-desk-home .hero--editorial .hero-title-line {
+    width: auto;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .production-desk-home .hero--editorial .hero-title-line--long {
+    font-size: .82em;
+  }
+  .production-desk-home .hero--editorial .hero-lead {
+    font-size: 15px;
+  }
+  .production-desk-home .hero--editorial .hero-visual {
+    min-height: clamp(420px, 112vw, 560px);
+  }
+}
+
+@media (max-width: 440px) {
+  .site-header .header-inner {
+    display: grid;
+    min-height: 76px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    flex-wrap: nowrap;
+    padding-block: 8px;
+  }
+  .site-header .header-inner > .brand {
+    grid-column: 1;
+    flex: 0 0 auto;
+  }
+  .site-header .header-actions {
+    grid-column: 2;
+    margin-left: 0;
+  }
+  .site-header .brand-lockup__official {
+    width: clamp(47px, 14vw, 58px);
+  }
+  .site-header .header-cta {
+    min-height: 44px;
+    padding: 10px 11px;
+    font-size: 11px;
+  }
+  .production-desk-home .hero--editorial h1 {
+    font-size: clamp(42px, 11.45vw, 51px);
+  }
+}
