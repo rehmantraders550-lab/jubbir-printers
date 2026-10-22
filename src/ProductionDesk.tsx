@@ -52,9 +52,8 @@ export default function ProductionDesk() {
   const serviceRouteRefs = useRef<Array<HTMLDivElement | null>>([]);
   const manualSelectionUntil = useRef(0);
   const reduceMotion = useReducedMotion();
-  // Empty until the owner approves an actual source-faithful Google Flow export.
-  // There is never a request for a missing video or a paid video-hosting dependency.
-  const heroVideoUrl = (import.meta.env.VITE_JUBBIR_HERO_VIDEO_URL ?? '').trim();
+  // Locally hosted, approved Google Flow output; no third-party video service or API required.
+  const heroVideoUrl = '/media/jubbir-machine-hero.mp4';
   const saveData = typeof navigator !== 'undefined' &&
     Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
   const [heroVideoPlaying, setHeroVideoPlaying] = useState(false);
