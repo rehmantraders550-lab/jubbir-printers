@@ -21,3 +21,11 @@ Standing rules:
 - Historical failed runs do not override newer successful production evidence.
 - When execution is delegated, work silently and interrupt only for a real blocker.
 - Project-specific visual/domain rules remain local; ORVIA governance transfers across projects.
+
+## Jubbir production publishing
+
+- The **only automatic** production publisher is `.github/workflows/publish-gh-pages.yml`, triggered by pushes to `main`. It compiles the site and publishes to `gh-pages`, the custom-domain GitHub Pages source.
+- `.github/workflows/publish-branch.yml` is retained as a **manual, non-publishing** verification workflow. It must not force-push, replace branches, delete files, or publish.
+- `.github/workflows/deploy-pages.yml` remains a manually triggered fallback; it is not an automatic publisher.
+- The canonical publisher uses `keep_files: true`. Existing published assets are preserved. Only an administrator may manually clean up obsolete files.
+- After merging, confirm one automatic publication run on the new `main` commit, confirm GitHub Pages deployment, and check that the public domain serves the new build. A successful upload alone is not proof of the live page rendering.
