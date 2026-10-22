@@ -180,8 +180,10 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
       const productImages = await page.locator('.home-product-card img').evaluateAll(images => images.map(image => (image as HTMLImageElement).src));
       expect(productImages).toHaveLength(8);
       expect(new Set(productImages).size).toBe(8);
-      // Bring lazy images into view before recording or judging the full page.
-      for (const img of await page.locator('img').all()) {
+      // Preload stable page images before taking a full-page screenshot.
+      // The sticky stage crossfades between different <img> nodes as we scroll;
+      // its dynamic image is verified separately by the production route tests.
+      for (const img of await page.locator('img:not(#service-panel img)').all()) {
         await img.scrollIntoViewIfNeeded();
         await expect.poll(() => img.evaluate(element => (element as HTMLImageElement).complete && (element as HTMLImageElement).naturalWidth > 0)).toBe(true);
       }
