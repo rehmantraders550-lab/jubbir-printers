@@ -135,6 +135,30 @@ test('production routes have a compact runway and balanced responsive detail sta
   }
 });
 
+test('production route details use warm paper with readable text on mobile and desktop', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    await page.locator('#services').scrollIntoViewIfNeeded();
+
+    for (const tab of await page.getByRole('tab').all()) {
+      await tab.click();
+      await expect(tab).toHaveAttribute('aria-selected', 'true');
+
+      const panel = page.locator('#service-panel');
+      await expect(panel).toHaveCSS('background-color', 'rgb(233, 227, 217)');
+      await expect(panel).toHaveCSS('color', 'rgb(23, 23, 23)');
+      await expect(panel.locator('h3')).toHaveCSS('color', 'rgb(23, 23, 23)');
+      await expect(panel.locator('.service-description')).toHaveCSS('color', 'rgb(97, 92, 84)');
+      await expect(panel.locator('.micro-label').first()).toHaveCSS('color', 'rgb(97, 92, 84)');
+      await expect(panel.locator('.eyebrow')).toHaveCSS('color', 'rgb(163, 66, 19)');
+      await expect(panel.locator('.service-details li').first()).toHaveCSS('color', 'rgb(23, 23, 23)');
+    }
+  }
+});
+
 test('sticky header stays solid while the production stage stays clear of it', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 
