@@ -61,16 +61,26 @@ export default function ProductionDesk() {
     const tabs = serviceTabRefs.current.filter((tab): tab is HTMLButtonElement => Boolean(tab));
     if (!tabs.length || typeof IntersectionObserver === 'undefined') return;
 
+    // The shorter runway selects the route nearest the reading line, not
+    // merely the last IntersectionObserver threshold to fire.
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!visible) return;
-        const index = tabs.indexOf(visible.target as HTMLButtonElement);
-        if (index >= 0) setActiveService(serviceOrder[index]);
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        const readingLine = window.innerHeight * 0.45;
+        const nearest = tabs
+          .map((tab, index) => {
+            const bounds = tab.getBoundingClientRect();
+            return {
+              index,
+              visible: bounds.bottom > 0 && bounds.top < window.innerHeight,
+              distance: Math.abs((bounds.top + bounds.bottom) / 2 - readingLine),
+            };
+          })
+          .filter((item) => item.visible)
+          .sort((a, b) => a.distance - b.distance)[0];
+        if (nearest) setActiveService(serviceOrder[nearest.index]);
       },
-      { rootMargin: '-38% 0px -38% 0px', threshold: [0, 0.35, 0.7, 1] },
+      { rootMargin: '-25% 0px -35% 0px', threshold: [0, 0.25, 0.6, 1] },
     );
 
     tabs.forEach((tab) => observer.observe(tab));
