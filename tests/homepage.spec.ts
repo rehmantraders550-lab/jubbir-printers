@@ -83,7 +83,7 @@ test('service tabs update the illustrative visual stage with keyboard and touch 
   }
 });
 
-test('sticky header remains opaque while the production route scrolls beneath it', async ({ page }) => {
+test('sticky header stays solid while the production stage stays clear of it', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 
   for (const width of [390, 1440]) {
@@ -102,20 +102,47 @@ test('sticky header remains opaque while the production route scrolls beneath it
       const panelBox = panel.getBoundingClientRect();
       const headerStyle = getComputedStyle(header);
       const panelStyle = getComputedStyle(panel);
+      const topElement = document.elementFromPoint(headerBox.left + headerBox.width / 2, headerBox.top + 8);
+
       return {
+        scrollY: window.scrollY,
+        headerTop: headerBox.top,
         headerBottom: headerBox.bottom,
         panelTop: panelBox.top,
+        headerPosition: headerStyle.position,
         headerBackground: headerStyle.backgroundColor,
+        headerBackdrop: headerStyle.backdropFilter,
+        headerIsolation: headerStyle.isolation,
+        panelPosition: panelStyle.position,
         panelIsolation: panelStyle.isolation,
+        headerAtTop: Boolean(topElement?.closest('.site-header')),
       };
     });
 
+    expect(result.scrollY).toBeGreaterThan(0);
+    expect(result.headerPosition).toBe('sticky');
+    expect(Math.abs(result.headerTop)).toBeLessThanOrEqual(1);
     expect(result.headerBackground).toBe('rgb(243, 239, 231)');
+    expect(result.headerBackdrop).toBe('none');
+    expect(result.headerIsolation).toBe('isolate');
+    expect(result.headerAtTop).toBe(true);
     expect(result.panelIsolation).toBe('isolate');
-    expect(result.headerBottom).toBeGreaterThan(result.panelTop);
-  }
-});
 
+    if (width >= 821) {
+      expect(result.panelPosition).toBe('sticky');
+      expect(result.panelTop).toBeGreaterThanOrEqual(result.headerBottom + 8);
+    } else {
+      expect(result.panelPosition).toBe('relative');
+    }
+  }
+
+  // The shared header must behave identically on interior pages.
+  await page.goto('/work.html');
+  await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
+  const interiorHeader = page.locator('.site-header');
+  await expect.poll(() => interiorHeader.evaluate(element => element.getBoundingClientRect().top)).toBe(0);
+  await expect(interiorHeader).toHaveCSS('background-color', 'rgb(243, 239, 231)');
+});
 
 test('service route runway updates the pinned panel from scroll', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
