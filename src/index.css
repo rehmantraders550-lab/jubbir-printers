@@ -2545,8 +2545,21 @@ img {
   height: 12px;
 }
 
+/* Warm material tone replaces the default white details card.
+   Explicit foreground values preserve text contrast on every production route. */
 .production-desk-home #services .service-panel {
   grid-template-columns: minmax(0, 1.34fr) minmax(185px, 0.66fr);
+  background: var(--paper-deep);
+  color: var(--ink);
+}
+
+.production-desk-home #services .service-panel .service-description,
+.production-desk-home #services .service-panel .micro-label {
+  color: #615c54;
+}
+
+.production-desk-home #services .service-panel .eyebrow {
+  color: #a34213;
 }
 
 .production-desk-home #services .service-panel__content {
