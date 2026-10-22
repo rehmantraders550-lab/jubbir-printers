@@ -174,8 +174,9 @@ test('homepage reflows and sticky anchors work at all six widths', async ({ page
         expect(line.x).toBeGreaterThanOrEqual(0);
         expect(line.right).toBeLessThanOrEqual(width + 1);
       }
-      if (width <= 860) expect(layout.visual.y).toBeGreaterThanOrEqual(layout.copy.bottom - 1);
-      else expect(layout.visual.y).toBe(layout.copy.y);
+      // The cinematic machine media now fills the hero while headline/CTA sit above it.
+      expect(layout.visual.y).toBeLessThanOrEqual(layout.copy.y + 1);
+      expect(layout.visual.bottom).toBeGreaterThanOrEqual(layout.copy.bottom - 1);
       await expect(page.locator('.desk-register li')).toHaveCount(5);
       const productImages = await page.locator('.home-product-card img').evaluateAll(images => images.map(image => (image as HTMLImageElement).src));
       expect(productImages).toHaveLength(8);
